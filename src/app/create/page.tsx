@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import {
@@ -10,10 +11,20 @@ import {
   CardFooter,
 } from "../../components/ui/Card";
 
+interface LessonCreationProgress {
+  step: 'validating' | 'extracting' | 'generating' | 'saving' | 'completed' | 'error';
+  message: string;
+  progress: number;
+  error?: string;
+}
+
 export default function CreateLessonPage() {
+  const router = useRouter();
   const [videoUrl, setVideoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [progress, setProgress] = useState<LessonCreationProgress | null>(null);
+  const [createdLessonId, setCreatedLessonId] = useState<string | null>(null);
 
   const validateYouTubeUrl = (url: string) => {
     const youtubeRegex =
@@ -24,6 +35,8 @@ export default function CreateLessonPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setProgress(null);
+    setCreatedLessonId(null);
 
     if (!videoUrl.trim()) {
       setError("Please enter a YouTube video URL");
@@ -37,17 +50,75 @@ export default function CreateLessonPage() {
 
     setIsLoading(true);
 
-    // Simulate API call for now
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/lessons/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ videoUrl }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to create lesson');
+      }
+
+      // Show final progress
+      if (data.progress && data.progress.length > 0) {
+        const finalProgress = data.progress[data.progress.length - 1];
+        setProgress(finalProgress);
+      }
+
+      // Set the created lesson ID for redirect
+      if (data.lesson && data.lesson.id) {
+        setCreatedLessonId(data.lesson.id);
+        
+        // Auto-redirect after 2 seconds
+        setTimeout(() => {
+          router.push(`/lesson/${data.lesson.id}`);
+        }, 2000);
+      }
+
+    } catch (err) {
+      console.error('Error creating lesson:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create lesson');
+      setProgress({
+        step: 'error',
+        message: 'Failed to create lesson',
+        progress: 0,
+        error: err instanceof Error ? err.message : 'Unknown error'
+      });
+    } finally {
       setIsLoading(false);
-      // In real implementation, this would redirect to the new lesson
-      console.log("Creating lesson for:", videoUrl);
-    }, 3000);
+    }
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoUrl(e.target.value);
     if (error) setError("");
+    if (progress?.step === 'error') setProgress(null);
+  };
+
+  const getProgressColor = (step: string) => {
+    switch (step) {
+      case 'completed': return '#059669';
+      case 'error': return '#ef4444';
+      default: return '#3b82f6';
+    }
+  };
+
+  const getProgressIcon = (step: string) => {
+    switch (step) {
+      case 'validating': return '🔍';
+      case 'extracting': return '📝';
+      case 'generating': return '🤖';
+      case 'saving': return '💾';
+      case 'completed': return '✅';
+      case 'error': return '❌';
+      default: return '⏳';
+    }
   };
 
   return (
@@ -97,16 +168,43 @@ export default function CreateLessonPage() {
                 </ul>
               </div>
 
-              {isLoading && (
+              {(isLoading || progress) && (
                 <div className="create-lesson__loading">
-                  <div className="loading-text">
-                    <div className="loading-spinner"></div>
-                    Generating your lesson... This may take a few minutes.
-                  </div>
-                  <p className="create-lesson__loading-details">
-                    We're extracting the transcript and creating personalized
-                    learning content for you.
-                  </p>
+                  {progress ? (
+                    <div className="progress-display">
+                      <div className="progress-header">
+                        <span className="progress-icon">{getProgressIcon(progress.step)}</span>
+                        <span className="progress-message">{progress.message}</span>
+                      </div>
+                      <div className="progress-bar">
+                        <div 
+                          className="progress-fill"
+                          style={{ 
+                            width: `${progress.progress}%`,
+                            backgroundColor: getProgressColor(progress.step)
+                          }}
+                        />
+                      </div>
+                      <div className="progress-percentage">{progress.progress}%</div>
+                      {progress.error && (
+                        <div className="progress-error">
+                          <strong>Error:</strong> {progress.error}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="loading-text">
+                      <div className="loading-spinner"></div>
+                      Starting lesson creation...
+                    </div>
+                  )}
+                  
+                  {createdLessonId && (
+                    <div className="success-message">
+                      <p>✅ Lesson created successfully!</p>
+                      <p>Redirecting to your new lesson...</p>
+                    </div>
+                  )}
                 </div>
               )}
             </form>
@@ -114,24 +212,37 @@ export default function CreateLessonPage() {
 
           <CardFooter>
             <div className="create-lesson__actions">
-              <Button
-                type="submit"
-                onClick={handleSubmit}
-                disabled={isLoading || !videoUrl.trim()}
-                className="create-lesson__submit"
-              >
-                {isLoading ? "Generating Lesson..." : "Create Lesson"}
-              </Button>
-              <Button
-                variant="secondary"
-                disabled={isLoading}
-                onClick={() => {
-                  setVideoUrl("");
-                  setError("");
-                }}
-              >
-                Clear
-              </Button>
+              {createdLessonId ? (
+                <Button
+                  onClick={() => router.push(`/lesson/${createdLessonId}`)}
+                  className="create-lesson__submit"
+                >
+                  View Lesson
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit}
+                    disabled={isLoading || !videoUrl.trim()}
+                    className="create-lesson__submit"
+                  >
+                    {isLoading ? "Creating Lesson..." : "Create Lesson"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    disabled={isLoading}
+                    onClick={() => {
+                      setVideoUrl("");
+                      setError("");
+                      setProgress(null);
+                      setCreatedLessonId(null);
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </>
+              )}
             </div>
           </CardFooter>
         </Card>
