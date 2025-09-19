@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  title     String
+  videoUrl  String
+  videoId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sections  Section[]
+  progress  UserProgress[]
+
+  @@map("lessons")
+}
+
+model Section {
+  id                String   @id @default(cuid())
+  title             String
+  summary           String
+  content           String
+  learningObjectives String // JSON array as string
+  order             Int
+  lessonId          String
+  lesson            Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  quiz              Quiz?
+  progress          SectionProgress[]
+
+  @@map("sections")
+}
+
+model Quiz {
+  id        String     @id @default(cuid())
+  questions String     // JSON array as string
+  sectionId String     @unique
+  section   Section    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  results   QuizResult[]
+
+  @@map("quizzes")
+}
+
+model UserProgress {
+  id               String            @id @default(cuid())
+  userId           String            @default("default") // For now, using default user
+  lessonId         String
+  completedAt      DateTime?
+  totalSections    Int
+  completedSections Int              @default(0)
+  lesson           Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sectionProgress  SectionProgress[]
+
+  @@unique([userId, lessonId])
+  @@map("user_progress")
+}
+
+model SectionProgress {
+  id               String       @id @default(cuid())
+  userId           String       @default("default")
+  sectionId        String
+  userProgressId   String
+  completedAt      DateTime?
+  section          Section      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  userProgress     UserProgress @relation(fields: [userProgressId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sectionId])
+  @@map("section_progress")
+}
+
+model QuizResult {
+  id          String   @id @default(cuid())
+  userId      String   @default("default")
+  quizId      String
+  answers     String   // JSON array as string
+  score       Int
+  totalQuestions Int
+  completedAt DateTime @default(now())
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_results")
+}

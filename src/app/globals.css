@@ -1,0 +1,412 @@
+/* Global Styles for Learning App */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: #111827;
+}
+
+p {
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Lessons Grid */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.lesson-card__progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.lesson-card__progress-fill {
+  height: 100%;
+  background-color: #3b82f6;
+  transition: width 0.3s ease-in-out;
+}
+
+.lesson-card__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Create Lesson Page */
+.create-lesson-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.create-lesson-card {
+  max-width: none;
+}
+
+.create-lesson__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.create-lesson__subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.create-lesson-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-lesson__info h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.create-lesson__steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.create-lesson__steps li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-lesson__loading {
+  padding: 24px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.create-lesson__loading-details {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 8px 0 0 0;
+}
+
+.create-lesson__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.create-lesson__submit {
+  min-width: 140px;
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tips-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tips-list li:last-child {
+  border-bottom: none;
+}
+
+.tips-list strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Lesson Page */
+.lesson-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.lesson-header {
+  margin-bottom: 32px;
+}
+
+.lesson-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.lesson-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.lesson-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lesson-video-card {
+  margin-bottom: 24px;
+}
+
+.lesson-video {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+
+.lesson-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.section-number {
+  font-size: 14px;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.section-summary {
+  font-size: 16px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.learning-objectives {
+  margin-bottom: 32px;
+}
+
+.learning-objectives h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.learning-objectives ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.learning-objectives li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #4b5563;
+  position: relative;
+  padding-left: 24px;
+}
+
+.learning-objectives li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #059669;
+  font-weight: bold;
+}
+
+.section-content {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.section-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 24px 0 12px 0;
+}
+
+.section-content h2:first-child {
+  margin-top: 0;
+}
+
+.section-content code {
+  background-color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 14px;
+}
+
+.section-content pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.section-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.section-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lesson-quiz {
+  margin-top: 32px;
+}
+
+.quiz-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.quiz-section-description {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lessons-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .create-lesson-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .lesson-title {
+    font-size: 24px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-navigation {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-navigation > * {
+    width: 100%;
+  }
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .topnav,
+  .lesson-video,
+  .quiz {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+  }
+}
+
+/* Utility classes */
+.text-balance {
+  text-wrap: balance;
+}

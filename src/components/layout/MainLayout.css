@@ -1,0 +1,136 @@
+.main-layout {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.main-content {
+  margin-left: 280px;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main-content--sidebar-collapsed {
+  margin-left: 64px;
+}
+
+.main-content__inner {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    margin-top: 64px;
+  }
+
+  .main-content--sidebar-collapsed {
+    margin-left: 0;
+  }
+
+  .main-content__inner {
+    padding: 20px 16px;
+  }
+}
+
+/* Page-specific styles */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.page-description {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.page-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Loading states */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+/* Empty states */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.empty-state__icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.empty-state__description {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+/* Error states */
+.error-state {
+  padding: 24px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.error-state__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0 0 8px 0;
+}
+
+.error-state__message {
+  font-size: 14px;
+  color: #991b1b;
+  margin: 0;
+  line-height: 1.5;
+}
