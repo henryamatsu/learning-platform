@@ -22,11 +22,11 @@ export async function extractTranscript(videoUrl: string): Promise<TranscriptRes
   try {
     console.log('Extracting transcript for:', videoUrl);
 
-    // Check if MCP tools are available
-    if (typeof mcp_supadatamcp_supadata_transcript === 'undefined') {
-      console.warn('Supadata MCP not available, using mock transcript');
-      return getMockTranscript(videoUrl);
-    }
+  // Check if MCP tools are available
+  if (typeof mcp_supadatamcp_supadata_transcript === 'undefined') {
+    console.warn('Supadata MCP not available, trying alternative extraction');
+    return await tryAlternativeExtraction(videoUrl);
+  }
 
     // Call Supadata transcript extraction
     const response = await mcp_supadatamcp_supadata_transcript({
