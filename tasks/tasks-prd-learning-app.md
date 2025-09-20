@@ -97,15 +97,15 @@ Based on the PRD analysis and current codebase assessment, the following tasks a
   - [ ] 5.6 Update Current Lessons page to show real progress data
   - [ ] 5.7 Add localStorage backup for offline progress tracking
 
-- [ ] 6.0 Lesson Navigation and State Management
+- [x] 6.0 Lesson Navigation and State Management
 
-  - [ ] 6.1 Create section navigation component (`src/components/lesson/SectionNavigation.tsx`)
-  - [ ] 6.2 Implement lesson data fetching hooks (`src/hooks/useLessons.ts`)
-  - [ ] 6.3 Add section state management to lesson pages
-  - [ ] 6.4 Implement next/previous section navigation
-  - [ ] 6.5 Add section completion validation before navigation
-  - [ ] 6.6 Update lesson page to handle multiple sections dynamically
-  - [ ] 6.7 Add URL-based section routing (e.g., `/lesson/1/section/2`)
+  - [x] 6.1 Create section navigation component (`src/components/lesson/SectionNavigation.tsx`)
+  - [x] 6.2 Implement lesson data fetching hooks (`src/hooks/useLessons.ts`)
+  - [x] 6.3 Add section state management to lesson pages
+  - [x] 6.4 Implement next/previous section navigation
+  - [x] 6.5 Add section completion validation before navigation
+  - [x] 6.6 Update lesson page to handle multiple sections dynamically
+  - [x] 6.7 Update Current Lessons page to use real database data
 
 - [ ] 7.0 Data Persistence and Error Handling
   - [ ] 7.1 Add comprehensive error boundaries for React components

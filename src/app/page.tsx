@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "../components/ui/Button";
 import {
@@ -6,55 +8,50 @@ import {
   CardContent,
   CardFooter,
 } from "../components/ui/Card";
-
-// Mock data for demonstration
-const mockLessons = [
-  {
-    id: "1",
-    title: "Introduction to JavaScript Variables",
-    videoUrl: "https://www.youtube.com/watch?v=example1",
-    createdAt: new Date("2024-01-15"),
-    totalSections: 2,
-    completedSections: 2,
-    progress: 100,
-  },
-  {
-    id: "2",
-    title: "React Hooks Explained",
-    videoUrl: "https://www.youtube.com/watch?v=example2",
-    createdAt: new Date("2024-01-10"),
-    totalSections: 4,
-    completedSections: 2,
-    progress: 50,
-  },
-  {
-    id: "3",
-    title: "CSS Grid Layout Tutorial",
-    videoUrl: "https://www.youtube.com/watch?v=example3",
-    createdAt: new Date("2024-01-05"),
-    totalSections: 3,
-    completedSections: 0,
-    progress: 0,
-  },
-];
+import { useLessons } from "../hooks/useLessons";
 
 export default function CurrentLessonsPage() {
-  return (
-    <div>
-      <div className="page-header">
-        <h1 className="page-title">Current Lessons</h1>
-        <p className="page-description">
-          View and continue your AI-generated learning courses from YouTube
-          videos.
-        </p>
-        <div className="page-actions">
-          <Link href="/create">
-            <Button>Create New Lesson</Button>
-          </Link>
+  const { lessons, loading, error, refetch } = useLessons();
+
+  if (loading) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1 className="page-title">Your Lessons</h1>
+          <p className="page-description">Loading your lessons...</p>
+        </div>
+        <div className="lessons-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading lessons...</p>
         </div>
       </div>
+    );
+  }
 
-      {mockLessons.length === 0 ? (
+  if (error) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1 className="page-title">Your Lessons</h1>
+          <p className="page-description">Error loading lessons</p>
+        </div>
+        <div className="lessons-error">
+          <p>❌ {error}</p>
+          <Button onClick={refetch}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (lessons.length === 0) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1 className="page-title">Your Lessons</h1>
+          <p className="page-description">
+            You haven't created any lessons yet. Start by adding a YouTube video!
+          </p>
+        </div>
         <div className="empty-state">
           <div className="empty-state__icon">📚</div>
           <h2 className="empty-state__title">No lessons yet</h2>
@@ -67,19 +64,42 @@ export default function CurrentLessonsPage() {
             <Button>Create Your First Lesson</Button>
           </Link>
         </div>
-      ) : (
-        <div className="lessons-grid">
-          {mockLessons.map((lesson) => (
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="page-header">
+        <h1 className="page-title">Your Lessons</h1>
+        <p className="page-description">
+          View and continue your AI-generated learning courses from YouTube
+          videos.
+        </p>
+        <div className="page-actions">
+          <Link href="/create">
+            <Button>Create New Lesson</Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="lessons-grid">
+        {lessons.map(({ lesson, progress }) => {
+          const completedSections = progress?.completedSections || 0;
+          const totalSections = lesson.sections?.length || 0;
+          const progressPercentage = totalSections > 0 ? Math.round((completedSections / totalSections) * 100) : 0;
+
+          return (
             <Card key={lesson.id} className="lesson-card" hover>
               <CardHeader>
                 <h3 className="lesson-card__title">{lesson.title}</h3>
                 <div className="lesson-card__meta">
                   <span className="lesson-card__progress">
-                    {lesson.progress}% Complete ({lesson.completedSections}/
-                    {lesson.totalSections} sections)
+                    {progressPercentage}% Complete ({completedSections}/
+                    {totalSections} sections)
                   </span>
                   <span className="lesson-card__date">
-                    Created {lesson.createdAt.toLocaleDateString()}
+                    Created {new Date(lesson.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </CardHeader>
@@ -88,35 +108,49 @@ export default function CurrentLessonsPage() {
                 <div className="lesson-card__progress-bar">
                   <div
                     className="lesson-card__progress-fill"
-                    style={{ width: `${lesson.progress}%` }}
+                    style={{ width: `${progressPercentage}%` }}
                   />
                 </div>
                 <p className="lesson-card__description">
-                  {lesson.totalSections} sections • Interactive quizzes •
+                  {totalSections} sections • Interactive quizzes •
                   AI-generated content
                 </p>
+                {lesson.videoUrl && (
+                  <div className="lesson-card__video">
+                    <a 
+                      href={lesson.videoUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="lesson-card__video-link"
+                    >
+                      📺 View Original Video
+                    </a>
+                  </div>
+                )}
               </CardContent>
 
               <CardFooter>
                 <div className="lesson-card__actions">
                   <Link href={`/lesson/${lesson.id}`}>
                     <Button>
-                      {lesson.progress === 0
+                      {progressPercentage === 0
                         ? "Start Lesson"
-                        : lesson.progress === 100
+                        : progressPercentage === 100
                         ? "Review Lesson"
                         : "Continue Lesson"}
                     </Button>
                   </Link>
-                  <Button variant="secondary" size="small">
-                    View Details
-                  </Button>
+                  <Link href={`/lesson/${lesson.id}`}>
+                    <Button variant="secondary" size="small">
+                      View Details
+                    </Button>
+                  </Link>
                 </div>
               </CardFooter>
             </Card>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }
