@@ -5,6 +5,8 @@ import { GetLessonsResponse } from '@/lib/types/lesson';
 // GET /api/lessons - Get all lessons
 export async function GET(request: NextRequest) {
   try {
+    const userId = 'default'; // In a real app, get from authentication
+
     const lessons = await prisma.lesson.findMany({
       include: {
         sections: {
@@ -15,24 +17,32 @@ export async function GET(request: NextRequest) {
             quiz: true
           }
         },
-        progress: true
+        progress: {
+          where: { userId },
+          include: {
+            sectionProgress: true
+          }
+        }
       },
       orderBy: {
         createdAt: 'desc'
       }
     });
 
-    // Transform the data to match our TypeScript interfaces
+    // Transform the data to match our LessonWithProgress interface
     const transformedLessons = lessons.map(lesson => ({
-      ...lesson,
-      sections: lesson.sections.map(section => ({
-        ...section,
-        learningObjectives: JSON.parse(section.learningObjectives),
-        quiz: section.quiz ? {
-          ...section.quiz,
-          questions: JSON.parse(section.quiz.questions)
-        } : undefined
-      }))
+      lesson: {
+        ...lesson,
+        sections: lesson.sections.map(section => ({
+          ...section,
+          learningObjectives: JSON.parse(section.learningObjectives),
+          quiz: section.quiz ? {
+            ...section.quiz,
+            questions: JSON.parse(section.quiz.questions)
+          } : undefined
+        }))
+      },
+      progress: lesson.progress[0] || null
     }));
 
     const response: GetLessonsResponse = {

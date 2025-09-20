@@ -86,6 +86,7 @@ export default function CurrentLessonsPage() {
 
       <div className="lessons-grid">
         {lessons.map(({ lesson, progress }) => {
+          console.log(lessons);
           const completedSections = progress?.completedSections || 0;
           const totalSections = lesson.sections?.length || 0;
           const progressPercentage =

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { Lesson, LessonWithProgress } from '@/lib/types/lesson';
+import { useState, useEffect, useCallback } from "react";
+import type { Lesson, LessonWithProgress } from "@/lib/types/lesson";
 
 export interface UseLessonsReturn {
   lessons: LessonWithProgress[];
@@ -23,20 +23,20 @@ export function useLessons(): UseLessonsReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/lessons');
+      const response = await fetch("/api/lessons");
       if (!response.ok) {
         throw new Error(`Failed to fetch lessons: ${response.status}`);
       }
 
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.message || 'Failed to fetch lessons');
+        throw new Error(data.message || "Failed to fetch lessons");
       }
 
       setLessons(data.lessons || []);
     } catch (err) {
-      console.error('Error fetching lessons:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch lessons');
+      console.error("Error fetching lessons:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch lessons");
       setLessons([]);
     } finally {
       setLoading(false);
@@ -51,7 +51,7 @@ export function useLessons(): UseLessonsReturn {
     lessons,
     loading,
     error,
-    refetch: fetchLessons
+    refetch: fetchLessons,
   };
 }
 
@@ -74,7 +74,7 @@ export function useLesson(lessonId: string): UseLessonReturn {
 
   const fetchLesson = useCallback(async () => {
     if (!lessonId) {
-      setError('No lesson ID provided');
+      setError("No lesson ID provided");
       setLoading(false);
       return;
     }
@@ -86,21 +86,21 @@ export function useLesson(lessonId: string): UseLessonReturn {
       const response = await fetch(`/api/lessons/${lessonId}`);
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Lesson not found');
+          throw new Error("Lesson not found");
         }
         throw new Error(`Failed to fetch lesson: ${response.status}`);
       }
 
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.message || 'Failed to fetch lesson');
+        throw new Error(data.message || "Failed to fetch lesson");
       }
 
       setLesson(data.lesson);
       setProgress(data.progress);
     } catch (err) {
-      console.error('Error fetching lesson:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch lesson');
+      console.error("Error fetching lesson:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch lesson");
       setLesson(null);
       setProgress(null);
     } finally {
@@ -117,7 +117,7 @@ export function useLesson(lessonId: string): UseLessonReturn {
     progress,
     loading,
     error,
-    refetch: fetchLesson
+    refetch: fetchLesson,
   };
 }
 
@@ -164,24 +164,27 @@ export function useSectionNavigation(
 
   const goToNextSection = useCallback(() => {
     if (canNavigateNext) {
-      setCurrentSection(prev => prev + 1);
+      setCurrentSection((prev) => prev + 1);
     }
   }, [canNavigateNext]);
 
   const goToPreviousSection = useCallback(() => {
     if (canNavigatePrevious) {
-      setCurrentSection(prev => prev - 1);
+      setCurrentSection((prev) => prev - 1);
     }
   }, [canNavigatePrevious]);
 
-  const goToSection = useCallback((sectionIndex: number) => {
-    if (sectionIndex >= 0 && sectionIndex < totalSections) {
-      setCurrentSection(sectionIndex);
-    }
-  }, [totalSections]);
+  const goToSection = useCallback(
+    (sectionIndex: number) => {
+      if (sectionIndex >= 0 && sectionIndex < totalSections) {
+        setCurrentSection(sectionIndex);
+      }
+    },
+    [totalSections]
+  );
 
   const markSectionComplete = useCallback((sectionIndex: number) => {
-    setCompletedSections(prev => {
+    setCompletedSections((prev) => {
       if (!prev.includes(sectionIndex)) {
         return [...prev, sectionIndex];
       }
@@ -198,7 +201,7 @@ export function useSectionNavigation(
     goToPreviousSection,
     goToSection,
     completedSections,
-    markSectionComplete
+    markSectionComplete,
   };
 }
 
@@ -210,7 +213,7 @@ export function useLessonStats() {
     totalLessons: 0,
     totalSections: 0,
     totalQuizzes: 0,
-    averageSectionsPerLesson: 0
+    averageSectionsPerLesson: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -221,16 +224,18 @@ export function useLessonStats() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('/api/lessons/stats');
+        const response = await fetch("/api/lessons/stats");
         if (!response.ok) {
-          throw new Error('Failed to fetch lesson statistics');
+          throw new Error("Failed to fetch lesson statistics");
         }
 
         const data = await response.json();
         setStats(data);
       } catch (err) {
-        console.error('Error fetching lesson stats:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch statistics');
+        console.error("Error fetching lesson stats:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch statistics"
+        );
       } finally {
         setLoading(false);
       }
