@@ -15,6 +15,7 @@
   --border-secondary: #6b7280;
   --hover-bg: #374151;
   --progress-bg: #374151;
+  --card-bg: #1f2937;
 }
 
 /* Blue Theme */
@@ -23,4 +24,5 @@
   --brand-secondary: #1e40af;
   --text-accent: #1d4ed8;
   --bg-accent: #dbeafe;
+  --card-bg: #f8fafc;
 }

@@ -41,6 +41,7 @@
   --warning-light: #fbbf24;
   --error: #dc2626;
   --error-light: #f87171;
+  --error-dark: #b91c1c;
 
   /* Interactive States */
   --hover-bg: #f3f4f6;
@@ -121,7 +122,7 @@
   --btn-secondary-hover: var(--hover-bg);
   --btn-danger-bg: var(--error);
   --btn-danger-text: var(--text-inverse);
-  --btn-danger-hover: #b91c1c;
+  --btn-danger-hover: var(--error-dark);
 
   /* Gradients */
   --gradient-primary: linear-gradient(
@@ -811,7 +812,7 @@ a:hover {
 .confirm-dialog {
   max-width: 500px;
   width: 100%;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -1129,6 +1130,6 @@ select:focus {
 }
 
 /* Utility classes */
-  .text-balance {
-    text-wrap: balance;
+.text-balance {
+  text-wrap: balance;
 }
