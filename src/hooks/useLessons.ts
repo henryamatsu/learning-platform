@@ -167,12 +167,14 @@ export function useSectionNavigation(
   const goToNextSection = useCallback(() => {
     if (canNavigateNext) {
       setCurrentSection((prev) => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [canNavigateNext]);
 
   const goToPreviousSection = useCallback(() => {
     if (canNavigatePrevious) {
       setCurrentSection((prev) => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [canNavigatePrevious]);
 
@@ -180,19 +182,36 @@ export function useSectionNavigation(
     (sectionIndex: number) => {
       if (sectionIndex >= 0 && sectionIndex < totalSections) {
         setCurrentSection(sectionIndex);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
     [totalSections]
   );
 
-  const markSectionComplete = useCallback((sectionIndex: number) => {
+  const markSectionComplete = useCallback(async (sectionIndex: number) => {
     setCompletedSections((prev) => {
       if (!prev.includes(sectionIndex)) {
-        return [...prev, sectionIndex];
+        const newCompleted = [...prev, sectionIndex];
+        
+        // Persist to database
+        if (lesson?.id) {
+          fetch(`/api/lessons/${lesson.id}/progress`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              currentSection,
+              completedSections: newCompleted
+            })
+          }).catch(error => {
+            console.error('Failed to save progress:', error);
+          });
+        }
+        
+        return newCompleted;
       }
       return prev;
     });
-  }, []);
+  }, [lesson?.id, currentSection]);
 
   return {
     currentSection,
