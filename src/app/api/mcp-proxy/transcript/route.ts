@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Supadata, Transcript } from "@supadata/js";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,43 +12,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('MCP Proxy: Extracting transcript for:', videoUrl);
+    console.log('Supadata: Extracting transcript for:', videoUrl);
 
-    // Make direct API call to Supadata
-    const supadataResponse = await fetch('https://api.supadata.ai/v1/transcript', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.SUPADATA_MCP_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url: videoUrl,
-        lang: 'en',
-        text: true,
-        mode: 'auto'
-      })
+    // Initialize the Supadata client
+    const supadata = new Supadata({
+      apiKey: process.env.SUPADATA_MCP_API_KEY || process.env.GEMINI_API_KEY,
     });
 
-    const supadataData = await supadataResponse.json();
+    // Extract transcript using official SDK
+    const transcript: Transcript = await supadata.youtube.transcript({
+      url: videoUrl,
+    });
 
-    if (supadataResponse.ok && supadataData.transcript) {
+    console.log('Supadata transcript result:', transcript);
+
+    if (transcript && transcript.text) {
       return NextResponse.json({
         success: true,
-        transcript: supadataData.transcript
+        transcript: transcript.text
       });
     }
 
     return NextResponse.json({
       success: false,
-      error: supadataData.error || 'Supadata API call failed'
+      error: 'No transcript text found in response'
     }, { status: 500 });
 
   } catch (error) {
-    console.error('MCP Proxy error:', error);
+    console.error('Supadata SDK error:', error);
     return NextResponse.json(
       { 
         success: false, 
-        error: error instanceof Error ? error.message : 'MCP proxy failed' 
+        error: error instanceof Error ? error.message : 'Supadata SDK failed' 
       },
       { status: 500 }
     );
