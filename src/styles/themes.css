@@ -1,135 +1,26 @@
-/* Theme Definitions */
-
-/* Default Light Theme (already defined in globals.css :root) */
+/* Simple Theme Options for Testing */
 
 /* Dark Theme */
 [data-theme="dark"] {
-  /* Background Colors */
   --bg-primary: #1f2937;
   --bg-secondary: #111827;
   --bg-tertiary: #374151;
-  --bg-accent: #1e3a8a;
-  --bg-success: #064e3b;
-  --bg-warning: #92400e;
-  --bg-error: #7f1d1d;
-  --bg-overlay: rgba(0, 0, 0, 0.8);
-
-  /* Text Colors */
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
-  --text-accent: #60a5fa;
-  --text-success: #6ee7b7;
-  --text-warning: #fbbf24;
-  --text-error: #fca5a5;
-  --text-inverse: #111827;
-
-  /* Border Colors */
-  --border-primary: #4b5563;
-  --border-secondary: #6b7280;
-  --border-accent: #3b82f6;
-  --border-success: #10b981;
-  --border-warning: #f59e0b;
-  --border-error: #dc2626;
-
-  /* Brand Colors */
   --brand-primary: #60a5fa;
-  --brand-secondary: #3b82f6;
-  --brand-accent: #93c5fd;
-
-  /* Interactive States */
-  --hover-bg: #374151;
-  --active-bg: #4b5563;
-  --focus-ring: #60a5fa;
-  --disabled-bg: #1f2937;
-  --disabled-text: #6b7280;
-
-  /* Progress & Loading */
-  --progress-bg: #374151;
-  --progress-fill: var(--brand-primary);
-  --loading-spinner: var(--brand-primary);
-
-  /* Navigation */
   --nav-bg: #1f2937;
   --nav-text: #f9fafb;
-  --nav-border: var(--border-primary);
-  --nav-link: #d1d5db;
-  --nav-link-hover: var(--brand-primary);
-  --nav-link-active: var(--brand-primary);
-
-  /* Section Navigation */
-  --section-nav-bg: var(--bg-tertiary);
-  --section-nav-border: var(--border-primary);
-  --section-nav-item-bg: var(--bg-primary);
-  --section-nav-item-border: var(--border-primary);
-  --section-nav-item-hover: var(--hover-bg);
-  --section-nav-current: #1e3a8a;
-  --section-nav-current-border: var(--brand-primary);
-  --section-nav-completed: #064e3b;
-  --section-nav-completed-border: var(--success);
+  --border-primary: #4b5563;
+  --border-secondary: #6b7280;
+  --hover-bg: #374151;
+  --progress-bg: #374151;
 }
 
 /* Blue Theme */
 [data-theme="blue"] {
-  --bg-primary: #eff6ff;
-  --bg-secondary: #dbeafe;
-  --bg-tertiary: #bfdbfe;
   --brand-primary: #1d4ed8;
   --brand-secondary: #1e40af;
-  --brand-accent: #3b82f6;
   --text-accent: #1d4ed8;
-  --progress-fill: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 100%);
-}
-
-/* Green Theme */
-[data-theme="green"] {
-  --bg-primary: #f0fdf4;
-  --bg-secondary: #ecfdf5;
-  --bg-tertiary: #d1fae5;
-  --brand-primary: #059669;
-  --brand-secondary: #047857;
-  --brand-accent: #10b981;
-  --text-accent: #059669;
-  --progress-fill: linear-gradient(90deg, #059669 0%, #10b981 100%);
-}
-
-/* Purple Theme */
-[data-theme="purple"] {
-  --bg-primary: #faf5ff;
-  --bg-secondary: #f3e8ff;
-  --bg-tertiary: #e9d5ff;
-  --brand-primary: #8b5cf6;
-  --brand-secondary: #7c3aed;
-  --brand-accent: #a78bfa;
-  --text-accent: #8b5cf6;
-  --progress-fill: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%);
-}
-
-/* Orange Theme */
-[data-theme="orange"] {
-  --bg-primary: #fff7ed;
-  --bg-secondary: #fed7aa;
-  --bg-tertiary: #fdba74;
-  --brand-primary: #ea580c;
-  --brand-secondary: #dc2626;
-  --brand-accent: #f97316;
-  --text-accent: #ea580c;
-  --progress-fill: linear-gradient(90deg, #ea580c 0%, #f97316 100%);
-}
-
-/* High Contrast Theme */
-[data-theme="high-contrast"] {
-  --bg-primary: #ffffff;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f3f4f6;
-  --text-primary: #000000;
-  --text-secondary: #000000;
-  --text-tertiary: #374151;
-  --brand-primary: #000000;
-  --brand-secondary: #000000;
-  --brand-accent: #374151;
-  --text-accent: #000000;
-  --border-primary: #000000;
-  --border-secondary: #374151;
-  --progress-fill: #000000;
+  --bg-accent: #dbeafe;
 }

@@ -19,25 +19,25 @@
 
 /* Variants */
 .btn--primary {
-  background-color: #3b82f6;
+  background-color: var(--btn-primary-bg);
   color: white;
-  border: 2px solid #3b82f6;
+  border: 2px solid var(--btn-primary-bg);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: #2563eb;
-  border-color: #2563eb;
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
   transform: translateY(-1px);
 }
 
 .btn--secondary {
   background-color: transparent;
-  color: #3b82f6;
-  border: 2px solid #3b82f6;
+  color: var(--btn-primary-bg);
+  border: 2px solid var(--btn-primary-bg);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background-color: #3b82f6;
+  background-color: var(--btn-primary-bg);
   color: white;
   transform: translateY(-1px);
 }

@@ -1,7 +1,7 @@
 .card {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   overflow: hidden;
   transition: all 0.2s ease-in-out;
@@ -14,12 +14,12 @@
 .card--hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px 0 rgba(0, 0, 0, 0.1), 0 4px 6px 0 rgba(0, 0, 0, 0.05);
-  border-color: #d1d5db;
+  border-color: var(--border-secondary);
 }
 
 .card__header {
   padding: 20px 24px 16px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .card__content {
@@ -28,8 +28,8 @@
 
 .card__footer {
   padding: 16px 24px 20px;
-  border-top: 1px solid #f3f4f6;
-  background-color: #f9fafb;
+  border-top: 1px solid var(--bg-tertiary);
+  background-color: var(--bg-secondary);
 }
 
 /* Lesson Card Specific Styles */
@@ -40,7 +40,7 @@
 .lesson-card__title {
   font-size: 18px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
@@ -49,23 +49,23 @@
   align-items: center;
   gap: 16px;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin-bottom: 12px;
 }
 
 .lesson-card__progress {
   font-size: 14px;
-  color: #059669;
+  color: var(--success);
   font-weight: 500;
 }
 
 .lesson-card__date {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 .lesson-card__description {
   font-size: 14px;
-  color: #4b5563;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
