@@ -1,5 +1,19 @@
 // YouTube transcript extraction service using Supadata MCP
 
+// Declare MCP functions as global
+declare global {
+  function mcp_supadatamcp_supadata_transcript(params: {
+    url: string;
+    lang?: string;
+    text?: boolean;
+    mode?: string;
+  }): Promise<any>;
+  
+  function mcp_supadatamcp_supadata_check_transcript_status(params: {
+    id: string;
+  }): Promise<any>;
+}
+
 export interface TranscriptResponse {
   success: boolean;
   transcript?: string;
@@ -22,11 +36,7 @@ export async function extractTranscript(videoUrl: string): Promise<TranscriptRes
   try {
     console.log('Extracting transcript for:', videoUrl);
 
-  // Check if MCP tools are available
-  if (typeof mcp_supadatamcp_supadata_transcript === 'undefined') {
-    console.warn('Supadata MCP not available, trying alternative extraction');
-    return await tryAlternativeExtraction(videoUrl);
-  }
+  // Use Supadata MCP directly - it should be available
 
     // Call Supadata transcript extraction
     const response = await mcp_supadatamcp_supadata_transcript({
@@ -67,9 +77,8 @@ export async function extractTranscript(videoUrl: string): Promise<TranscriptRes
       hasApiKey: !!process.env.SUPADATA_MCP_API_KEY
     });
     
-    // Try alternative transcript extraction methods
-    console.log('Trying alternative transcript extraction...');
-    return await tryAlternativeExtraction(videoUrl);
+    // MCP failed, return error
+    throw error;
   }
 }
 
@@ -80,15 +89,7 @@ export async function checkTranscriptStatus(jobId: string): Promise<TranscriptRe
   try {
     console.log('Checking transcript status for job:', jobId);
 
-    // Check if MCP tools are available
-    if (typeof mcp_supadatamcp_supadata_check_transcript_status === 'undefined') {
-      console.warn('Supadata MCP not available, returning mock completed status');
-      return {
-        success: true,
-        status: 'completed',
-        transcript: getMockTranscriptContent()
-      };
-    }
+    // Use Supadata MCP directly
 
     const response = await mcp_supadatamcp_supadata_check_transcript_status({
       id: jobId
@@ -213,92 +214,7 @@ async function pollTranscriptJob(
   };
 }
 
-/**
- * Try alternative transcript extraction methods
- */
-async function tryAlternativeExtraction(videoUrl: string): Promise<TranscriptResponse> {
-  try {
-    // Method 1: Try youtube-transcript package
-    console.log('Attempting youtube-transcript extraction...');
-    
-    const { YoutubeTranscript } = await import('youtube-transcript');
-    const transcriptItems = await YoutubeTranscript.fetchTranscript(videoUrl);
-    
-    if (transcriptItems && transcriptItems.length > 0) {
-      const transcript = transcriptItems
-        .map(item => item.text)
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-      
-      console.log(`Successfully extracted transcript using youtube-transcript: ${transcript.length} characters`);
-      
-      return {
-        success: true,
-        transcript: transcript
-      };
-    }
-    
-    throw new Error('No transcript items found');
-    
-  } catch (error) {
-    console.error('youtube-transcript extraction failed:', error);
-    
-    // Method 2: Return helpful error message
-    return {
-      success: false,
-      error: `Unable to extract transcript from video: ${videoUrl}. 
 
-Possible reasons:
-1. Video doesn't have captions/subtitles enabled
-2. Video is private or restricted
-3. Video is too new (captions not processed yet)
-4. Geographic restrictions
-
-Please try:
-- A different video with clear captions
-- A popular educational video
-- Checking if the video has subtitles when you watch it manually
-
-Example working videos:
-- Khan Academy videos
-- TED Talks
-- Popular programming tutorials`
-    };
-  }
-}
-
-/**
- * Mock transcript for development and fallback
- */
-function getMockTranscript(videoUrl: string): TranscriptResponse {
-  return {
-    success: true,
-    transcript: getMockTranscriptContent()
-  };
-}
-
-function getMockTranscriptContent(): string {
-  return `Welcome to this educational video about JavaScript variables. 
-
-In this lesson, we're going to explore one of the fundamental concepts in programming: variables. Variables are like containers that store data values in your programs.
-
-Let's start with the basics. What exactly is a variable? Think of a variable as a labeled box where you can store information. You can put different types of data in these boxes - numbers, text, true or false values, and more.
-
-In JavaScript, there are three main ways to declare variables: var, let, and const. Each of these keywords has its own characteristics and use cases.
-
-The var keyword is the oldest way to declare variables in JavaScript. It has function scope, which means the variable is available throughout the entire function where it's declared.
-
-The let keyword was introduced in ES6 and provides block scope. This means the variable is only available within the block of code where it's declared, such as inside curly braces.
-
-The const keyword is used to declare constants - variables whose values cannot be changed after they're initially assigned. Like let, const also has block scope.
-
-When choosing between these keywords, it's generally recommended to use const by default for values that won't change, let when you need to reassign the variable, and to avoid var in modern JavaScript due to its scope-related issues.
-
-Variables make your code more readable, maintainable, and flexible. Instead of hardcoding values throughout your program, you can use descriptive variable names that make your intentions clear.
-
-That concludes our introduction to JavaScript variables. In the next section, we'll dive deeper into variable scope and best practices for naming your variables.`;
-}
 
 /**
  * Validate transcript content
