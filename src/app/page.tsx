@@ -49,7 +49,7 @@ export default function CurrentLessonsPage() {
         <div className="page-header">
           <h1 className="page-title">Your Lessons</h1>
           <p className="page-description">
-            You haven't created any lessons yet. Start by adding a YouTube
+            You haven&apos;t created any lessons yet. Start by adding a YouTube
             video!
           </p>
         </div>
