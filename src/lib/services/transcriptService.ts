@@ -6,12 +6,12 @@ export interface TranscriptResponse {
   transcript?: string;
   error?: string;
   jobId?: string;
-  status?: 'completed' | 'processing' | 'failed';
+  status?: "completed" | "processing" | "failed";
 }
 
 export interface TranscriptJob {
   id: string;
-  status: 'queued' | 'active' | 'completed' | 'failed';
+  status: "queued" | "active" | "completed" | "failed";
   result?: string;
   error?: string;
 }
@@ -19,31 +19,40 @@ export interface TranscriptJob {
 /**
  * Extract transcript from YouTube video using Supadata MCP
  */
-export async function extractTranscript(videoUrl: string): Promise<TranscriptResponse> {
+export async function extractTranscript(
+  videoUrl: string
+): Promise<TranscriptResponse> {
   try {
-    console.log('Extracting transcript for:', videoUrl);
+    console.log("Extracting transcript for:", videoUrl);
 
-    // For now, return a helpful error message until MCP is properly configured
-    return {
-      success: false,
-      error: `Transcript extraction not yet configured. 
+    // Call MCP proxy endpoint that will use Supadata MCP
+    const response = await fetch('/api/mcp-proxy/transcript', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ videoUrl }),
+    });
 
-To fix this, you need to either:
-1. Set up Supadata MCP server properly, or  
-2. Use a different transcript extraction method
+    const data = await response.json();
 
-Video URL attempted: ${videoUrl}`
-    };
+    if (data.success && data.transcript) {
+      return {
+        success: true,
+        transcript: data.transcript,
+      };
+    }
 
+    throw new Error(data.error || 'MCP transcript extraction failed');
   } catch (error) {
-    console.error('Error extracting transcript:', error);
-    console.error('Supadata MCP error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
+    console.error("Error extracting transcript:", error);
+    console.error("Supadata MCP error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
       videoUrl,
       mcpEnabled: process.env.SUPADATA_MCP_ENABLED,
-      hasApiKey: !!process.env.SUPADATA_MCP_API_KEY
+      hasApiKey: !!process.env.SUPADATA_MCP_API_KEY,
     });
-    
+
     // MCP failed, return error
     throw error;
   }
@@ -52,43 +61,44 @@ Video URL attempted: ${videoUrl}`
 /**
  * Check status of transcript extraction job
  */
-export async function checkTranscriptStatus(jobId: string): Promise<TranscriptResponse> {
+export async function checkTranscriptStatus(
+  jobId: string
+): Promise<TranscriptResponse> {
   try {
-    console.log('Checking transcript status for job:', jobId);
+    console.log("Checking transcript status for job:", jobId);
 
     // Use Supadata MCP directly
 
     const response = await mcp_supadatamcp_supadata_check_transcript_status({
-      id: jobId
+      id: jobId,
     });
 
-    if (response.status === 'completed' && response.result) {
+    if (response.status === "completed" && response.result) {
       return {
         success: true,
-        status: 'completed',
-        transcript: response.result
+        status: "completed",
+        transcript: response.result,
       };
     }
 
-    if (response.status === 'failed') {
+    if (response.status === "failed") {
       return {
         success: false,
-        status: 'failed',
-        error: response.error || 'Transcript extraction failed'
+        status: "failed",
+        error: response.error || "Transcript extraction failed",
       };
     }
 
     return {
       success: true,
-      status: response.status as 'processing',
-      jobId: jobId
+      status: response.status as "processing",
+      jobId: jobId,
     };
-
   } catch (error) {
-    console.error('Error checking transcript status:', error);
+    console.error("Error checking transcript status:", error);
     return {
       success: false,
-      error: 'Failed to check transcript status'
+      error: "Failed to check transcript status",
     };
   }
 }
@@ -121,32 +131,33 @@ export async function extractTranscriptWithRetry(
       if (!response.success) {
         attempt++;
         if (attempt < maxRetries) {
-          console.log(`Transcript extraction attempt ${attempt} failed, retrying...`);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.log(
+            `Transcript extraction attempt ${attempt} failed, retrying...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, 2000));
           continue;
         }
       }
 
       return response;
-
     } catch (error) {
       attempt++;
       console.error(`Transcript extraction attempt ${attempt} failed:`, error);
-      
+
       if (attempt >= maxRetries) {
         return {
           success: false,
-          error: `Failed to extract transcript after ${maxRetries} attempts`
+          error: `Failed to extract transcript after ${maxRetries} attempts`,
         };
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
 
   return {
     success: false,
-    error: 'Max retries exceeded'
+    error: "Max retries exceeded",
   };
 }
 
@@ -163,31 +174,29 @@ async function pollTranscriptJob(
   while (Date.now() - startTime < maxPollTime) {
     const status = await checkTranscriptStatus(jobId);
 
-    if (status.status === 'completed' && status.transcript) {
+    if (status.status === "completed" && status.transcript) {
       return status;
     }
 
-    if (status.status === 'failed') {
+    if (status.status === "failed") {
       return status;
     }
 
     // Wait before next poll
-    await new Promise(resolve => setTimeout(resolve, pollInterval));
+    await new Promise((resolve) => setTimeout(resolve, pollInterval));
   }
 
   return {
     success: false,
-    error: 'Transcript extraction timed out'
+    error: "Transcript extraction timed out",
   };
 }
-
-
 
 /**
  * Validate transcript content
  */
 export function validateTranscript(transcript: string): boolean {
-  if (!transcript || typeof transcript !== 'string') {
+  if (!transcript || typeof transcript !== "string") {
     return false;
   }
 
@@ -209,16 +218,18 @@ export function validateTranscript(transcript: string): boolean {
  * Clean and prepare transcript for AI processing
  */
 export function cleanTranscript(transcript: string): string {
-  if (!transcript) return '';
+  if (!transcript) return "";
 
-  return transcript
-    // Remove excessive whitespace
-    .replace(/\s+/g, ' ')
-    // Remove common transcript artifacts
-    .replace(/\[.*?\]/g, '') // Remove [music], [applause], etc.
-    .replace(/\(.*?\)/g, '') // Remove (inaudible), etc.
-    // Clean up punctuation
-    .replace(/\s+([,.!?])/g, '$1')
-    // Trim and normalize
-    .trim();
+  return (
+    transcript
+      // Remove excessive whitespace
+      .replace(/\s+/g, " ")
+      // Remove common transcript artifacts
+      .replace(/\[.*?\]/g, "") // Remove [music], [applause], etc.
+      .replace(/\(.*?\)/g, "") // Remove (inaudible), etc.
+      // Clean up punctuation
+      .replace(/\s+([,.!?])/g, "$1")
+      // Trim and normalize
+      .trim()
+  );
 }
