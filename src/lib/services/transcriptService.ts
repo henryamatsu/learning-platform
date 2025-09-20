@@ -1,18 +1,5 @@
 // YouTube transcript extraction service using Supadata MCP
-
-// Declare MCP functions as global
-declare global {
-  function mcp_supadatamcp_supadata_transcript(params: {
-    url: string;
-    lang?: string;
-    text?: boolean;
-    mode?: string;
-  }): Promise<any>;
-  
-  function mcp_supadatamcp_supadata_check_transcript_status(params: {
-    id: string;
-  }): Promise<any>;
-}
+// Note: MCP functions are available as tools in the Cursor environment
 
 export interface TranscriptResponse {
   success: boolean;
@@ -36,36 +23,16 @@ export async function extractTranscript(videoUrl: string): Promise<TranscriptRes
   try {
     console.log('Extracting transcript for:', videoUrl);
 
-  // Use Supadata MCP directly - it should be available
-
-    // Call Supadata transcript extraction
-    const response = await mcp_supadatamcp_supadata_transcript({
-      url: videoUrl,
-      lang: 'en',
-      text: true,
-      mode: 'auto'
-    });
-
-    // Handle immediate response (transcript ready)
-    if (typeof response === 'string') {
-      return {
-        success: true,
-        transcript: response
-      };
-    }
-
-    // Handle job-based response (async processing)
-    if (response && typeof response === 'object' && 'id' in response) {
-      return {
-        success: true,
-        jobId: response.id as string,
-        status: 'processing'
-      };
-    }
-
+    // For now, return a helpful error message until MCP is properly configured
     return {
       success: false,
-      error: 'Unexpected response format from transcript service'
+      error: `Transcript extraction not yet configured. 
+
+To fix this, you need to either:
+1. Set up Supadata MCP server properly, or  
+2. Use a different transcript extraction method
+
+Video URL attempted: ${videoUrl}`
     };
 
   } catch (error) {
