@@ -48,6 +48,9 @@ export interface UserProgress {
   completedAt?: Date;
   totalSections: number;
   completedSections: number;
+  currentSection: number;
+  createdAt: Date;
+  updatedAt: Date;
   sectionProgress: SectionProgress[];
 }
 
@@ -73,7 +76,7 @@ export interface CreateLessonResponse {
 }
 
 export interface GetLessonsResponse {
-  lessons: Lesson[];
+  lessons: LessonWithProgress[];
   success: boolean;
 }
 
@@ -97,9 +100,10 @@ export interface UpdateProgressResponse {
 }
 
 // Utility types
-export type LessonWithProgress = Lesson & {
+export interface LessonWithProgress {
+  lesson: Lesson;
   progress?: UserProgress;
-};
+}
 
 export type SectionWithQuiz = Section & {
   quiz: Quiz;

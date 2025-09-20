@@ -1,21 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Lesson } from '@/lib/types/lesson';
-
-export interface LessonWithProgress {
-  lesson: Lesson;
-  progress?: {
-    id: string;
-    userId: string;
-    lessonId: string;
-    totalSections: number;
-    completedSections: number;
-    currentSection: number;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-}
+import type { Lesson, LessonWithProgress } from '@/lib/types/lesson';
 
 export interface UseLessonsReturn {
   lessons: LessonWithProgress[];

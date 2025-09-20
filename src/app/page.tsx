@@ -49,7 +49,8 @@ export default function CurrentLessonsPage() {
         <div className="page-header">
           <h1 className="page-title">Your Lessons</h1>
           <p className="page-description">
-            You haven't created any lessons yet. Start by adding a YouTube video!
+            You haven't created any lessons yet. Start by adding a YouTube
+            video!
           </p>
         </div>
         <div className="empty-state">
@@ -87,7 +88,10 @@ export default function CurrentLessonsPage() {
         {lessons.map(({ lesson, progress }) => {
           const completedSections = progress?.completedSections || 0;
           const totalSections = lesson.sections?.length || 0;
-          const progressPercentage = totalSections > 0 ? Math.round((completedSections / totalSections) * 100) : 0;
+          const progressPercentage =
+            totalSections > 0
+              ? Math.round((completedSections / totalSections) * 100)
+              : 0;
 
           return (
             <Card key={lesson.id} className="lesson-card" hover>
@@ -112,14 +116,14 @@ export default function CurrentLessonsPage() {
                   />
                 </div>
                 <p className="lesson-card__description">
-                  {totalSections} sections • Interactive quizzes •
-                  AI-generated content
+                  {totalSections} sections • Interactive quizzes • AI-generated
+                  content
                 </p>
                 {lesson.videoUrl && (
                   <div className="lesson-card__video">
-                    <a 
-                      href={lesson.videoUrl} 
-                      target="_blank" 
+                    <a
+                      href={lesson.videoUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="lesson-card__video-link"
                     >

@@ -30,14 +30,14 @@ export default function LessonPage({ params }: LessonPageProps) {
     goToPreviousSection,
     goToSection,
     completedSections,
-    markSectionComplete
+    markSectionComplete,
   } = useSectionNavigation(lesson, progress);
 
   const handleQuizComplete = (score: number, answers: number[]) => {
     console.log("Quiz completed:", { score, answers });
     // Mark current section as complete
     markSectionComplete(currentSection);
-    
+
     // Auto-advance to next section if available
     if (canNavigateNext) {
       setTimeout(() => {
@@ -62,11 +62,14 @@ export default function LessonPage({ params }: LessonPageProps) {
   if (error || !lesson) {
     return (
       <div className="lesson-error">
-        <h2>❌ {error || 'Lesson not found'}</h2>
-        <p>We couldn't load this lesson. Please try again or go back to your lessons.</p>
+        <h2>❌ {error || "Lesson not found"}</h2>
+        <p>
+          We couldn't load this lesson. Please try again or go back to your
+          lessons.
+        </p>
         <div className="lesson-error__actions">
           <Button onClick={refetch}>Try Again</Button>
-          <Button variant="secondary" onClick={() => router.push('/')}>
+          <Button variant="secondary" onClick={() => router.push("/")}>
             Back to Lessons
           </Button>
         </div>
@@ -79,7 +82,7 @@ export default function LessonPage({ params }: LessonPageProps) {
       <div className="lesson-error">
         <h2>📝 No content available</h2>
         <p>This lesson doesn't have any sections yet.</p>
-        <Button onClick={() => router.push('/')}>Back to Lessons</Button>
+        <Button onClick={() => router.push("/")}>Back to Lessons</Button>
       </div>
     );
   }
@@ -90,21 +93,21 @@ export default function LessonPage({ params }: LessonPageProps) {
       <div className="lesson-error">
         <h2>📝 Section not found</h2>
         <p>The requested section doesn't exist.</p>
-        <Button onClick={() => router.push('/')}>Back to Lessons</Button>
+        <Button onClick={() => router.push("/")}>Back to Lessons</Button>
       </div>
     );
   }
 
-  const sectionTitles = lesson.sections.map(section => section.title);
+  const sectionTitles = lesson.sections.map((section) => section.title);
 
   return (
     <div className="lesson-page">
       <div className="lesson-header">
         <div className="lesson-breadcrumb">
-          <Button 
-            variant="secondary" 
+          <Button
+            variant="secondary"
             size="small"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
           >
             ← Back to Lessons
           </Button>
@@ -115,9 +118,9 @@ export default function LessonPage({ params }: LessonPageProps) {
             {lesson.sections.length} sections
           </span>
           {lesson.videoUrl && (
-            <a 
-              href={lesson.videoUrl} 
-              target="_blank" 
+            <a
+              href={lesson.videoUrl}
+              target="_blank"
               rel="noopener noreferrer"
               className="lesson-video-link"
             >
@@ -146,21 +149,25 @@ export default function LessonPage({ params }: LessonPageProps) {
 
             <CardContent>
               <div className="lesson-objectives">
-                <h3 className="lesson-objectives__title">Learning Objectives</h3>
+                <h3 className="lesson-objectives__title">
+                  Learning Objectives
+                </h3>
                 <ul className="lesson-objectives__list">
-                  {currentSectionData.learningObjectives.map((objective, index) => (
-                    <li key={index} className="lesson-objectives__item">
-                      {objective}
-                    </li>
-                  ))}
+                  {currentSectionData.learningObjectives.map(
+                    (objective, index) => (
+                      <li key={index} className="lesson-objectives__item">
+                        {objective}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
 
               <div className="lesson-content-body">
-                <div 
+                <div
                   className="lesson-content__text"
-                  dangerouslySetInnerHTML={{ 
-                    __html: currentSectionData.content.replace(/\n/g, '<br/>') 
+                  dangerouslySetInnerHTML={{
+                    __html: currentSectionData.content.replace(/\n/g, "<br/>"),
                   }}
                 />
               </div>
@@ -172,7 +179,8 @@ export default function LessonPage({ params }: LessonPageProps) {
               <CardHeader>
                 <h3 className="quiz-section-title">Section Quiz</h3>
                 <p className="quiz-section-description">
-                  Test your understanding of the concepts covered in this section.
+                  Test your understanding of the concepts covered in this
+                  section.
                 </p>
               </CardHeader>
               <CardContent>
