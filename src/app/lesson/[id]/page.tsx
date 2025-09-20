@@ -31,6 +31,8 @@ export default function LessonPage({ params }: LessonPageProps) {
     goToSection,
     completedSections,
     markSectionComplete,
+    saveQuizState,
+    getQuizState,
   } = useSectionNavigation(lesson, progress);
 
   const handleQuizComplete = (score: number, answers: number[]) => {
@@ -184,11 +186,12 @@ export default function LessonPage({ params }: LessonPageProps) {
                 </p>
               </CardHeader>
               <CardContent>
-                <Quiz
-                  key={`quiz-${currentSection}`}
-                  questions={currentSectionData.quiz.questions}
-                  onComplete={handleQuizComplete}
-                />
+                  <Quiz
+                    questions={currentSectionData.quiz.questions}
+                    onComplete={handleQuizComplete}
+                    initialState={getQuizState(currentSection)}
+                    onStateChange={(state) => saveQuizState(currentSection, state)}
+                  />
               </CardContent>
             </Card>
           )}

@@ -55,7 +55,7 @@
   padding: 16px 20px;
   border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background-color: white;
+  background-color: var(--quiz-option-bg);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-align: left;

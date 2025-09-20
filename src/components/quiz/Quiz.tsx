@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/Button";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/Card";
 import "./Quiz.css";
@@ -17,22 +17,51 @@ interface QuizProps {
   onComplete?: (score: number, answers: number[]) => void;
   className?: string;
   key?: string | number; // Add key prop to force re-render when section changes
+  initialState?: {
+    currentQuestion: number;
+    selectedAnswers: number[];
+    showResults: boolean;
+    submitted: boolean;
+    checkedAnswers: boolean[];
+  };
+  onStateChange?: (state: any) => void;
 }
 
 export const Quiz: React.FC<QuizProps> = ({
   questions,
   onComplete,
   className = "",
+  initialState,
+  onStateChange,
 }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(
+    initialState?.currentQuestion || 0
+  );
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>(
-    new Array(questions.length).fill(-1)
+    initialState?.selectedAnswers || new Array(questions.length).fill(-1)
   );
-  const [showResults, setShowResults] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [showResults, setShowResults] = useState(
+    initialState?.showResults || false
+  );
+  const [submitted, setSubmitted] = useState(
+    initialState?.submitted || false
+  );
   const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>(
-    new Array(questions.length).fill(false)
+    initialState?.checkedAnswers || new Array(questions.length).fill(false)
   );
+
+  // Save state changes
+  useEffect(() => {
+    if (onStateChange) {
+      onStateChange({
+        currentQuestion,
+        selectedAnswers,
+        showResults,
+        submitted,
+        checkedAnswers,
+      });
+    }
+  }, [currentQuestion, selectedAnswers, showResults, submitted, checkedAnswers, onStateChange]);
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (checkedAnswers[currentQuestion]) return;
