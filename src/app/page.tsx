@@ -39,21 +39,21 @@ export default function CurrentLessonsPage() {
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     const success = await deleteLesson(deleteDialog.lessonId);
-    
+
     if (success) {
-      logUserAction("delete_lesson_confirmed", { 
+      logUserAction("delete_lesson_confirmed", {
         lessonId: deleteDialog.lessonId,
-        lessonTitle: deleteDialog.lessonTitle 
+        lessonTitle: deleteDialog.lessonTitle,
       });
     }
-    
+
     setIsDeleting(false);
     setDeleteDialog({ isOpen: false, lessonId: "", lessonTitle: "" });
   };
 
   const handleDeleteCancel = () => {
-    logUserAction("delete_lesson_cancelled", { 
-      lessonId: deleteDialog.lessonId 
+    logUserAction("delete_lesson_cancelled", {
+      lessonId: deleteDialog.lessonId,
     });
     setDeleteDialog({ isOpen: false, lessonId: "", lessonTitle: "" });
   };
@@ -117,111 +117,111 @@ export default function CurrentLessonsPage() {
   return (
     <ErrorBoundary>
       <div>
-      <div className="page-header">
-        <h1 className="page-title">Your Lessons</h1>
-        <p className="page-description">
-          View and continue your AI-generated learning courses from YouTube
-          videos.
-        </p>
-        <div className="page-actions">
-          <Link href="/create">
-            <Button>Create New Lesson</Button>
-          </Link>
+        <div className="page-header">
+          <h1 className="page-title">Your Lessons</h1>
+          <p className="page-description">
+            View and continue your AI-generated learning courses from YouTube
+            videos.
+          </p>
+          <div className="page-actions">
+            <Link href="/create">
+              <Button>Create New Lesson</Button>
+            </Link>
+          </div>
         </div>
-      </div>
 
-      <div className="lessons-grid">
-        {lessons.map(({ lesson, progress }) => {
-          const completedSections = progress?.completedSections || 0;
-          const totalSections = lesson.sections?.length || 0;
-          const progressPercentage =
-            totalSections > 0
-              ? Math.round((completedSections / totalSections) * 100)
-              : 0;
+        <div className="lessons-grid">
+          {lessons.map(({ lesson, progress }) => {
+            const completedSections = progress?.completedSections || 0;
+            const totalSections = lesson.sections?.length || 0;
+            const progressPercentage =
+              totalSections > 0
+                ? Math.round((completedSections / totalSections) * 100)
+                : 0;
 
-          return (
-            <Card key={lesson.id} className="lesson-card" hover>
-              <CardHeader>
-                <h3 className="lesson-card__title">{lesson.title}</h3>
-                <div className="lesson-card__meta">
-                  <span className="lesson-card__progress">
-                    {progressPercentage}% Complete ({completedSections}/
-                    {totalSections} sections)
-                  </span>
-                  <span className="lesson-card__date">
-                    Created {new Date(lesson.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </CardHeader>
-
-              <CardContent>
-                <div className="lesson-card__progress-bar">
-                  <div
-                    className="lesson-card__progress-fill"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-                <p className="lesson-card__description">
-                  {totalSections} sections • Interactive quizzes • AI-generated
-                  content
-                </p>
-                {lesson.videoUrl && (
-                  <div className="lesson-card__video">
-                    <a
-                      href={lesson.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="lesson-card__video-link"
-                    >
-                      📺 View Original Video
-                    </a>
+            return (
+              <Card key={lesson.id} className="lesson-card" hover>
+                <CardHeader>
+                  <h3 className="lesson-card__title">{lesson.title}</h3>
+                  <div className="lesson-card__meta">
+                    <span className="lesson-card__progress">
+                      {progressPercentage}% Complete ({completedSections}/
+                      {totalSections} sections)
+                    </span>
+                    <span className="lesson-card__date">
+                      Created {new Date(lesson.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                )}
-              </CardContent>
+                </CardHeader>
 
-              <CardFooter>
-                <div className="lesson-card__actions">
-                  <Link href={`/lesson/${lesson.id}`}>
-                    <Button>
-                      {progressPercentage === 0
-                        ? "Start Lesson"
-                        : progressPercentage === 100
-                        ? "Review Lesson"
-                        : "Continue Lesson"}
+                <CardContent>
+                  <div className="lesson-card__progress-bar">
+                    <div
+                      className="lesson-card__progress-fill"
+                      style={{ width: `${progressPercentage}%` }}
+                    />
+                  </div>
+                  <p className="lesson-card__description">
+                    {totalSections} sections • Interactive quizzes •
+                    AI-generated content
+                  </p>
+                  {lesson.videoUrl && (
+                    <div className="lesson-card__video">
+                      <a
+                        href={lesson.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="lesson-card__video-link"
+                      >
+                        📺 View Original Video
+                      </a>
+                    </div>
+                  )}
+                </CardContent>
+
+                <CardFooter>
+                  <div className="lesson-card__actions">
+                    <Link href={`/lesson/${lesson.id}`}>
+                      <Button>
+                        {progressPercentage === 0
+                          ? "Start Lesson"
+                          : progressPercentage === 100
+                          ? "Review Lesson"
+                          : "Continue Lesson"}
+                      </Button>
+                    </Link>
+                    <Link href={`/lesson/${lesson.id}`}>
+                      <Button variant="secondary" size="small">
+                        View Details
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      onClick={() => handleDeleteClick(lesson.id, lesson.title)}
+                      className="lesson-card__delete-btn"
+                    >
+                      🗑️ Delete
                     </Button>
-                  </Link>
-                  <Link href={`/lesson/${lesson.id}`}>
-                    <Button variant="secondary" size="small">
-                      View Details
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={() => handleDeleteClick(lesson.id, lesson.title)}
-                    className="lesson-card__delete-btn"
-                  >
-                    🗑️ Delete
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          );
-        })}
+                  </div>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+
+        <ConfirmDialog
+          isOpen={deleteDialog.isOpen}
+          title="Delete Lesson"
+          message={`Are you sure you want to delete "${deleteDialog.lessonTitle}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          confirmVariant="danger"
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          loading={isDeleting}
+        />
       </div>
-
-      <ConfirmDialog
-        isOpen={deleteDialog.isOpen}
-        title="Delete Lesson"
-        message={`Are you sure you want to delete "${deleteDialog.lessonTitle}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        confirmVariant="danger"
-        onConfirm={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
-        loading={isDeleting}
-      />
-    </div>
     </ErrorBoundary>
   );
 }

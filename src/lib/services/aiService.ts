@@ -87,6 +87,12 @@ export async function generateLessonContent(
 
   } catch (error) {
     console.error('Error generating lesson content:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      transcript: transcript.substring(0, 200) + '...',
+      transcriptLength: transcript.length
+    });
     
     // Fallback to mock content for development
     console.warn('Falling back to mock content generation');
@@ -126,6 +132,12 @@ async function generateWithGemini(
 
   } catch (error) {
     console.error('Error with Gemini AI generation:', error);
+    console.error('Gemini error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      apiKey: process.env.GEMINI_API_KEY ? 'Present' : 'Missing',
+      promptLength: prompt.length
+    });
     return null;
   }
 }

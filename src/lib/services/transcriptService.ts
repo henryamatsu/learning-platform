@@ -60,10 +60,16 @@ export async function extractTranscript(videoUrl: string): Promise<TranscriptRes
 
   } catch (error) {
     console.error('Error extracting transcript:', error);
+    console.error('Supadata MCP error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      videoUrl,
+      mcpEnabled: process.env.SUPADATA_MCP_ENABLED,
+      hasApiKey: !!process.env.SUPADATA_MCP_API_KEY
+    });
     
-    // Fallback to mock transcript for development
-    console.warn('Falling back to mock transcript due to error');
-    return getMockTranscript(videoUrl);
+    // Try alternative transcript extraction methods
+    console.log('Trying alternative transcript extraction...');
+    return await tryAlternativeExtraction(videoUrl);
   }
 }
 
@@ -205,6 +211,61 @@ async function pollTranscriptJob(
     success: false,
     error: 'Transcript extraction timed out'
   };
+}
+
+/**
+ * Try alternative transcript extraction methods
+ */
+async function tryAlternativeExtraction(videoUrl: string): Promise<TranscriptResponse> {
+  try {
+    // Method 1: Try youtube-transcript package
+    console.log('Attempting youtube-transcript extraction...');
+    
+    const { YoutubeTranscript } = await import('youtube-transcript');
+    const transcriptItems = await YoutubeTranscript.fetchTranscript(videoUrl);
+    
+    if (transcriptItems && transcriptItems.length > 0) {
+      const transcript = transcriptItems
+        .map(item => item.text)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      console.log(`Successfully extracted transcript using youtube-transcript: ${transcript.length} characters`);
+      
+      return {
+        success: true,
+        transcript: transcript
+      };
+    }
+    
+    throw new Error('No transcript items found');
+    
+  } catch (error) {
+    console.error('youtube-transcript extraction failed:', error);
+    
+    // Method 2: Return helpful error message
+    return {
+      success: false,
+      error: `Unable to extract transcript from video: ${videoUrl}. 
+
+Possible reasons:
+1. Video doesn't have captions/subtitles enabled
+2. Video is private or restricted
+3. Video is too new (captions not processed yet)
+4. Geographic restrictions
+
+Please try:
+- A different video with clear captions
+- A popular educational video
+- Checking if the video has subtitles when you watch it manually
+
+Example working videos:
+- Khan Academy videos
+- TED Talks
+- Popular programming tutorials`
+    };
+  }
 }
 
 /**
