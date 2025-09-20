@@ -50,7 +50,7 @@ a:hover {
 /* Lessons Grid */
 .lessons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
   margin-top: 24px;
 }
@@ -74,6 +74,8 @@ a:hover {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 /* Create Lesson Page */
@@ -265,23 +267,26 @@ a:hover {
 
 .section-navigation__sections {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
 }
 
 .section-navigation__item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: 12px;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
+  text-align: center;
+  min-width: 120px;
+  flex: 1;
 }
 
 .section-navigation__item:hover:not(:disabled) {
@@ -310,19 +315,24 @@ a:hover {
 }
 
 .section-navigation__item-content {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .section-navigation__item-title {
   font-weight: 500;
   color: #1f2937;
-  font-size: 14px;
-  margin-bottom: 2px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.3;
 }
 
 .section-navigation__item-status {
-  font-size: 12px;
+  font-size: 10px;
   color: #6b7280;
+  text-align: center;
 }
 
 .section-navigation__controls {

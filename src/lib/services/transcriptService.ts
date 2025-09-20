@@ -1,5 +1,5 @@
-// YouTube transcript extraction service using Supadata MCP
-// Note: MCP functions are available as tools in the Cursor environment
+// YouTube transcript extraction service using Supadata SDK
+import { Supadata } from "@supadata/js";
 
 export interface TranscriptResponse {
   success: boolean;
@@ -17,49 +17,88 @@ export interface TranscriptJob {
 }
 
 /**
- * Extract transcript from YouTube video using Supadata MCP
+ * Extract transcript from YouTube video using Supadata SDK directly
  */
 export async function extractTranscript(
   videoUrl: string
 ): Promise<TranscriptResponse> {
   try {
-    console.log("Extracting transcript for:", videoUrl);
+    console.log("Supadata: Extracting transcript for:", videoUrl);
+    console.log("Supadata API key:", process.env.SUPADATA_MCP_API_KEY);
 
-    // Call MCP proxy endpoint that will use Supadata MCP
-    const response = await fetch('/api/mcp-proxy/transcript', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ videoUrl }),
+    // Initialize the Supadata client
+    const supadata = new Supadata({
+      apiKey: process.env.SUPADATA_MCP_API_KEY!,
     });
 
-    const data = await response.json();
+    // Extract transcript using official SDK
+    const transcript = await supadata.transcript({
+      url: videoUrl,
+      lang: "en",
+      text: true,
+      mode: "auto",
+    });
 
-    if (data.success && data.transcript) {
-      return {
-        success: true,
-        transcript: data.transcript,
-      };
+    console.log("Supadata transcript result:", transcript);
+
+    // Check if we got a transcript directly or a job ID for async processing
+    if ("jobId" in transcript) {
+      // For large files, we get a job ID and need to poll for results
+      const jobResult = await supadata.transcript.getJobStatus(
+        transcript.jobId
+      );
+
+      console.log("Supadata job result:", jobResult);
+      if (jobResult.status === "completed") {
+        // Try to access the content directly from jobResult
+        const content =
+          (jobResult as any).content ||
+          (jobResult as any).data?.content ||
+          (jobResult as any).result?.content;
+        if (content) {
+          return {
+            success: true,
+            transcript: content,
+          };
+        }
+      } else if (jobResult.status === "failed") {
+        throw new Error(jobResult.error || "Transcript job failed");
+      } else {
+        // Job is still processing, return job ID for polling
+        return {
+          success: true,
+          jobId: transcript.jobId,
+          status: "processing",
+        };
+      }
+    } else {
+      // For smaller files or native transcripts, we get the result directly
+      if (transcript && transcript.content) {
+        return {
+          success: true,
+          transcript: transcript.content,
+        };
+      }
     }
 
-    throw new Error(data.error || 'MCP transcript extraction failed');
+    throw new Error("No transcript content found in response");
   } catch (error) {
-    console.error("Error extracting transcript:", error);
-    console.error("Supadata MCP error details:", {
+    console.error("Supadata SDK error:", error);
+    console.error("Supadata error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
       videoUrl,
-      mcpEnabled: process.env.SUPADATA_MCP_ENABLED,
       hasApiKey: !!process.env.SUPADATA_MCP_API_KEY,
     });
 
-    // MCP failed, return error
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Supadata SDK failed",
+    };
   }
 }
 
 /**
- * Check status of transcript extraction job
+ * Check status of transcript extraction job using Supadata SDK
  */
 export async function checkTranscriptStatus(
   jobId: string
@@ -67,18 +106,26 @@ export async function checkTranscriptStatus(
   try {
     console.log("Checking transcript status for job:", jobId);
 
-    // Use Supadata MCP directly
-
-    const response = await mcp_supadatamcp_supadata_check_transcript_status({
-      id: jobId,
+    // Initialize the Supadata client
+    const supadata = new Supadata({
+      apiKey: process.env.SUPADATA_MCP_API_KEY!,
     });
 
-    if (response.status === "completed" && response.result) {
-      return {
-        success: true,
-        status: "completed",
-        transcript: response.result,
-      };
+    const response = await supadata.transcript.getJobStatus(jobId);
+
+    if (response.status === "completed") {
+      // Try to access the content from different possible locations
+      const content =
+        (response as any).content ||
+        (response as any).data?.content ||
+        (response as any).result?.content;
+      if (content) {
+        return {
+          success: true,
+          status: "completed",
+          transcript: content,
+        };
+      }
     }
 
     if (response.status === "failed") {

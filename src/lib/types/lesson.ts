@@ -70,9 +70,10 @@ export interface CreateLessonRequest {
 }
 
 export interface CreateLessonResponse {
-  lesson: Lesson;
+  lesson: Lesson | null;
   success: boolean;
   message?: string;
+  progress?: any[];
 }
 
 export interface GetLessonsResponse {

@@ -16,6 +16,7 @@ interface QuizProps {
   questions: QuizQuestion[];
   onComplete?: (score: number, answers: number[]) => void;
   className?: string;
+  key?: string | number; // Add key prop to force re-render when section changes
 }
 
 export const Quiz: React.FC<QuizProps> = ({
@@ -29,13 +30,22 @@ export const Quiz: React.FC<QuizProps> = ({
   );
   const [showResults, setShowResults] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>(
+    new Array(questions.length).fill(false)
+  );
 
   const handleAnswerSelect = (answerIndex: number) => {
-    if (submitted) return;
+    if (checkedAnswers[currentQuestion]) return;
 
     const newAnswers = [...selectedAnswers];
     newAnswers[currentQuestion] = answerIndex;
     setSelectedAnswers(newAnswers);
+  };
+
+  const handleCheckAnswer = () => {
+    const newCheckedAnswers = [...checkedAnswers];
+    newCheckedAnswers[currentQuestion] = true;
+    setCheckedAnswers(newCheckedAnswers);
   };
 
   const handleNext = () => {
@@ -63,13 +73,16 @@ export const Quiz: React.FC<QuizProps> = ({
 
   const handleRetake = () => {
     setSelectedAnswers(new Array(questions.length).fill(-1));
+    setCheckedAnswers(new Array(questions.length).fill(false));
     setCurrentQuestion(0);
     setShowResults(false);
     setSubmitted(false);
   };
 
   const isAnswered = selectedAnswers[currentQuestion] !== -1;
+  const isChecked = checkedAnswers[currentQuestion];
   const allAnswered = selectedAnswers.every((answer) => answer !== -1);
+  const allChecked = checkedAnswers.every((checked) => checked);
   const currentQuestionData = questions[currentQuestion];
   const score = selectedAnswers.reduce((acc, answer, index) => {
     return acc + (answer === questions[index].correctAnswer ? 1 : 0);
@@ -104,8 +117,8 @@ export const Quiz: React.FC<QuizProps> = ({
               {currentQuestionData.options.map((option, index) => {
                 const isSelected = selectedAnswers[currentQuestion] === index;
                 const isCorrect = index === currentQuestionData.correctAnswer;
-                const isIncorrect = submitted && isSelected && !isCorrect;
-                const shouldShowCorrect = submitted && isCorrect;
+                const isIncorrect = isChecked && isSelected && !isCorrect;
+                const shouldShowCorrect = isChecked && isCorrect;
 
                 return (
                   <button
@@ -116,7 +129,7 @@ export const Quiz: React.FC<QuizProps> = ({
                       shouldShowCorrect ? "quiz__option--correct" : ""
                     }`}
                     onClick={() => handleAnswerSelect(index)}
-                    disabled={submitted}
+                    disabled={isChecked}
                   >
                     <span className="quiz__option-letter">
                       {String.fromCharCode(65 + index)}
@@ -133,7 +146,7 @@ export const Quiz: React.FC<QuizProps> = ({
               })}
             </div>
 
-            {submitted && currentQuestionData.explanation && (
+            {isChecked && currentQuestionData.explanation && (
               <div className="quiz__explanation">
                 <h5>Explanation:</h5>
                 <p>{currentQuestionData.explanation}</p>
@@ -154,14 +167,18 @@ export const Quiz: React.FC<QuizProps> = ({
                   Previous
                 </Button>
 
-                {currentQuestion < questions.length - 1 ? (
-                  <Button onClick={handleNext} disabled={!isAnswered}>
-                    Next
+                {!isChecked ? (
+                  <Button onClick={handleCheckAnswer} disabled={!isAnswered}>
+                    Check Answer
+                  </Button>
+                ) : currentQuestion < questions.length - 1 ? (
+                  <Button onClick={handleNext}>
+                    Next Question
                   </Button>
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={!allAnswered || submitted}
+                    disabled={!allChecked || submitted}
                   >
                     Submit Quiz
                   </Button>

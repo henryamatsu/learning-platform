@@ -185,6 +185,7 @@ export default function LessonPage({ params }: LessonPageProps) {
               </CardHeader>
               <CardContent>
                 <Quiz
+                  key={`quiz-${currentSection}`}
                   questions={currentSectionData.quiz.questions}
                   onComplete={handleQuizComplete}
                 />
