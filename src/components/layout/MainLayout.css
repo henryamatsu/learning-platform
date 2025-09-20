@@ -1,6 +1,6 @@
 .main-layout {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: var(--bg-secondary);
 }
 
 .main-content {
@@ -44,13 +44,13 @@
 .page-title {
   font-size: 32px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .page-description {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 0;
   line-height: 1.5;
 }
@@ -66,9 +66,9 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--progress-bg);
   border-radius: 50%;
-  border-top-color: #3b82f6;
+  border-top-color: var(--loading-spinner);
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -83,7 +83,7 @@
   align-items: center;
   gap: 12px;
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 /* Empty states */
@@ -101,13 +101,13 @@
 .empty-state__title {
   font-size: 20px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .empty-state__description {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 0 0 24px 0;
   line-height: 1.5;
 }
@@ -115,8 +115,8 @@
 /* Error states */
 .error-state {
   padding: 24px;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  background-color: var(--bg-error);
+  border: 1px solid var(--border-error);
   border-radius: 8px;
   margin-bottom: 24px;
 }
@@ -124,13 +124,13 @@
 .error-state__title {
   font-size: 18px;
   font-weight: 600;
-  color: #dc2626;
+  color: var(--error);
   margin: 0 0 8px 0;
 }
 
 .error-state__message {
   font-size: 14px;
-  color: #991b1b;
+  color: var(--text-error);
   margin: 0;
   line-height: 1.5;
 }

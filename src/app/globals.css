@@ -1,5 +1,133 @@
 /* Global Styles for Learning App */
 
+/* CSS Custom Properties (Variables) for Theming */
+:root {
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-accent: #eff6ff;
+  --bg-success: #ecfdf5;
+  --bg-warning: #fef3c7;
+  --bg-error: #fef2f2;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-accent: #3b82f6;
+  --text-success: #065f46;
+  --text-warning: #92400e;
+  --text-error: #991b1b;
+  --text-inverse: #ffffff;
+
+  /* Border Colors */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  --border-accent: #3b82f6;
+  --border-success: #a7f3d0;
+  --border-warning: #fcd34d;
+  --border-error: #fecaca;
+
+  /* Brand Colors */
+  --brand-primary: #3b82f6;
+  --brand-secondary: #1d4ed8;
+  --brand-accent: #60a5fa;
+
+  /* Status Colors */
+  --success: #10b981;
+  --success-light: #6ee7b7;
+  --warning: #f59e0b;
+  --warning-light: #fbbf24;
+  --error: #dc2626;
+  --error-light: #f87171;
+
+  /* Interactive States */
+  --hover-bg: #f3f4f6;
+  --active-bg: #e5e7eb;
+  --focus-ring: #3b82f6;
+  --disabled-bg: #f9fafb;
+  --disabled-text: #9ca3af;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Progress & Loading */
+  --progress-bg: #e5e7eb;
+  --progress-fill: var(--brand-primary);
+  --loading-spinner: var(--brand-primary);
+
+  /* Card & Component Backgrounds */
+  --card-bg: var(--bg-primary);
+  --card-border: var(--border-primary);
+  --card-shadow: var(--shadow-md);
+
+  /* Navigation */
+  --nav-bg: #f8fafc;
+  --nav-text: #1f2937;
+  --nav-border: var(--border-primary);
+  --nav-link: #6b7280;
+  --nav-link-hover: var(--brand-primary);
+  --nav-link-active: var(--brand-primary);
+
+  /* Sidebar */
+  --sidebar-bg: var(--bg-primary);
+  --sidebar-border: var(--border-primary);
+  --sidebar-text: var(--text-secondary);
+  --sidebar-link: var(--text-secondary);
+  --sidebar-link-hover: var(--brand-primary);
+  --sidebar-link-active: var(--brand-primary);
+
+  /* Section Navigation */
+  --section-nav-bg: var(--bg-secondary);
+  --section-nav-border: var(--border-secondary);
+  --section-nav-item-bg: var(--bg-primary);
+  --section-nav-item-border: var(--border-primary);
+  --section-nav-item-hover: var(--hover-bg);
+  --section-nav-current: #dbeafe;
+  --section-nav-current-border: var(--brand-primary);
+  --section-nav-completed: #dcfce7;
+  --section-nav-completed-border: var(--success);
+
+  /* Quiz Colors */
+  --quiz-option-bg: var(--bg-primary);
+  --quiz-option-border: var(--border-primary);
+  --quiz-option-hover: var(--hover-bg);
+  --quiz-option-selected: #dbeafe;
+  --quiz-option-correct: #dcfce7;
+  --quiz-option-incorrect: #fef2f2;
+  --quiz-explanation-bg: var(--bg-accent);
+
+  /* Form Elements */
+  --input-bg: var(--bg-primary);
+  --input-border: var(--border-primary);
+  --input-focus: var(--brand-primary);
+  --input-text: var(--text-primary);
+  --input-placeholder: var(--text-tertiary);
+
+  /* Buttons */
+  --btn-primary-bg: var(--brand-primary);
+  --btn-primary-text: var(--text-inverse);
+  --btn-primary-hover: var(--brand-secondary);
+  --btn-secondary-bg: var(--bg-primary);
+  --btn-secondary-text: var(--text-secondary);
+  --btn-secondary-border: var(--border-primary);
+  --btn-secondary-hover: var(--hover-bg);
+  --btn-danger-bg: var(--error);
+  --btn-danger-text: var(--text-inverse);
+  --btn-danger-hover: #b91c1c;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+  --gradient-warning: linear-gradient(135deg, var(--warning) 0%, var(--warning-light) 100%);
+  --gradient-error: linear-gradient(135deg, var(--error) 0%, var(--error-light) 100%);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -17,8 +145,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #111827;
-  background-color: #f9fafb;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
 }
 
 /* Typography */
@@ -30,16 +158,16 @@ h5,
 h6 {
   font-weight: 600;
   line-height: 1.25;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 p {
   line-height: 1.6;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 
 a {
-  color: #3b82f6;
+  color: var(--text-accent);
   text-decoration: none;
 }
 
@@ -58,7 +186,7 @@ a:hover {
 .lesson-card__progress-bar {
   width: 100%;
   height: 8px;
-  background-color: #e5e7eb;
+  background-color: var(--progress-bg);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -66,7 +194,7 @@ a:hover {
 
 .lesson-card__progress-fill {
   height: 100%;
-  background-color: #3b82f6;
+  background: var(--progress-fill);
   transition: width 0.3s ease-in-out;
 }
 
@@ -93,13 +221,13 @@ a:hover {
 .create-lesson__title {
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .create-lesson__subtitle {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 0;
 }
 
@@ -112,7 +240,7 @@ a:hover {
 .create-lesson__info h4 {
   font-size: 18px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0 0 12px 0;
 }
 
@@ -125,7 +253,7 @@ a:hover {
 .create-lesson__steps li {
   padding: 8px 0;
   font-size: 14px;
-  color: #4b5563;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -133,15 +261,15 @@ a:hover {
 
 .create-lesson__loading {
   padding: 24px;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background-color: var(--bg-accent);
+  border: 1px solid var(--border-accent);
   border-radius: 8px;
   text-align: center;
 }
 
 .create-lesson__loading-details {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 8px 0 0 0;
 }
 
@@ -149,8 +277,8 @@ a:hover {
 .progress-display {
   text-align: left;
   padding: 20px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
 }
 
@@ -168,13 +296,13 @@ a:hover {
 .progress-message {
   font-size: 16px;
   font-weight: 500;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .progress-bar {
   width: 100%;
   height: 12px;
-  background-color: #e5e7eb;
+  background-color: var(--progress-bg);
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 8px;
@@ -182,6 +310,7 @@ a:hover {
 
 .progress-fill {
   height: 100%;
+  background: var(--progress-fill);
   transition: width 0.3s ease-in-out;
   border-radius: 6px;
 }
@@ -190,31 +319,31 @@ a:hover {
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--text-secondary);
 }
 
 .progress-error {
   margin-top: 12px;
   padding: 12px;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  background-color: var(--bg-error);
+  border: 1px solid var(--border-error);
   border-radius: 6px;
-  color: #991b1b;
+  color: var(--text-error);
   font-size: 14px;
 }
 
 .success-message {
   margin-top: 16px;
   padding: 16px;
-  background-color: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background-color: var(--bg-success);
+  border: 1px solid var(--border-success);
   border-radius: 8px;
   text-align: center;
 }
 
 .success-message p {
   margin: 4px 0;
-  color: #065f46;
+  color: var(--text-success);
   font-weight: 500;
 }
 
@@ -229,7 +358,7 @@ a:hover {
 }
 
 .lessons-error p, .lesson-error p {
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 16px 0;
 }
 
@@ -241,8 +370,8 @@ a:hover {
 
 /* Section Navigation Component */
 .section-navigation {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--section-nav-bg);
+  border: 1px solid var(--section-nav-border);
   border-radius: 12px;
   padding: 20px;
   position: sticky;
@@ -256,13 +385,13 @@ a:hover {
 .section-navigation__title {
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .section-navigation__progress {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 .section-navigation__sections {
@@ -279,8 +408,8 @@ a:hover {
   align-items: center;
   gap: 8px;
   padding: 12px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--section-nav-item-bg);
+  border: 1px solid var(--section-nav-item-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -290,8 +419,8 @@ a:hover {
 }
 
 .section-navigation__item:hover:not(:disabled) {
-  background: #f3f4f6;
-  border-color: #d1d5db;
+  background: var(--section-nav-item-hover);
+  border-color: var(--border-secondary);
 }
 
 .section-navigation__item:disabled {
@@ -300,13 +429,13 @@ a:hover {
 }
 
 .section-navigation__item--current {
-  background: #dbeafe;
-  border-color: #3b82f6;
+  background: var(--section-nav-current);
+  border-color: var(--section-nav-current-border);
 }
 
 .section-navigation__item--completed {
-  background: #dcfce7;
-  border-color: #16a34a;
+  background: var(--section-nav-completed);
+  border-color: var(--section-nav-completed-border);
 }
 
 .section-navigation__item-icon {
@@ -323,7 +452,7 @@ a:hover {
 
 .section-navigation__item-title {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--text-primary);
   font-size: 12px;
   text-align: center;
   line-height: 1.3;
@@ -331,7 +460,7 @@ a:hover {
 
 .section-navigation__item-status {
   font-size: 10px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   text-align: center;
 }
 
@@ -341,12 +470,12 @@ a:hover {
   justify-content: space-between;
   gap: 12px;
   padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-primary);
 }
 
 .section-navigation__current {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-weight: 500;
 }
 

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeSelector } from "../ThemeSelector";
 import "./TopNav.css";
 
 interface TopNavProps {
@@ -75,6 +76,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             Create
           </Link>
         </nav>
+        <ThemeSelector />
       </div>
     </header>
   );
