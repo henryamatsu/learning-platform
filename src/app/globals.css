@@ -16,7 +16,7 @@
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-tertiary: #6b7280;
-  --text-accent: #3b82f6;
+  --text-accent: var(--brand-primary);
   --text-success: #065f46;
   --text-warning: #92400e;
   --text-error: #991b1b;
@@ -25,7 +25,6 @@
   /* Border Colors */
   --border-primary: #e5e7eb;
   --border-secondary: #d1d5db;
-  --border-accent: #3b82f6;
   --border-success: #a7f3d0;
   --border-warning: #fcd34d;
   --border-error: #fecaca;
@@ -46,7 +45,7 @@
   /* Interactive States */
   --hover-bg: #f3f4f6;
   --active-bg: #e5e7eb;
-  --focus-ring: #3b82f6;
+  --focus-ring: var(--brand-primary);
   --disabled-bg: #f9fafb;
   --disabled-text: #9ca3af;
 
@@ -60,7 +59,7 @@
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   /* Progress & Loading */
-  --progress-bg: #e5e7eb;
+  --progress-bg: var(--border-primary);
   --progress-fill: var(--brand-primary);
   --loading-spinner: var(--brand-primary);
 
@@ -70,10 +69,10 @@
   --card-shadow: var(--shadow-md);
 
   /* Navigation */
-  --nav-bg: #f8fafc;
-  --nav-text: #1f2937;
+  --nav-bg: var(--bg-secondary);
+  --nav-text: var(--text-primary);
   --nav-border: var(--border-primary);
-  --nav-link: #6b7280;
+  --nav-link: var(--text-tertiary);
   --nav-link-hover: var(--brand-primary);
   --nav-link-active: var(--brand-primary);
 
@@ -91,18 +90,18 @@
   --section-nav-item-bg: var(--bg-primary);
   --section-nav-item-border: var(--border-primary);
   --section-nav-item-hover: var(--hover-bg);
-  --section-nav-current: #dbeafe;
+  --section-nav-current: var(--bg-accent);
   --section-nav-current-border: var(--brand-primary);
-  --section-nav-completed: #dcfce7;
+  --section-nav-completed: var(--bg-success);
   --section-nav-completed-border: var(--success);
 
   /* Quiz Colors */
   --quiz-option-bg: var(--bg-primary);
   --quiz-option-border: var(--border-primary);
   --quiz-option-hover: var(--hover-bg);
-  --quiz-option-selected: #dbeafe;
-  --quiz-option-correct: #dcfce7;
-  --quiz-option-incorrect: #fef2f2;
+  --quiz-option-selected: var(--bg-accent);
+  --quiz-option-correct: var(--bg-success);
+  --quiz-option-incorrect: var(--bg-error);
   --quiz-explanation-bg: var(--bg-accent);
 
   /* Form Elements */
@@ -525,7 +524,7 @@ a:hover {
 .lesson-title {
   font-size: 32px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0 0 12px 0;
   line-height: 1.2;
 }
@@ -674,7 +673,7 @@ a:hover {
 
 .lesson-content__text strong {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 /* Video link in lesson cards */
@@ -683,7 +682,7 @@ a:hover {
 }
 
 .lesson-card__video-link {
-  color: #3b82f6;
+  color: var(--brand-primary);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -821,7 +820,7 @@ a:hover {
 .confirm-dialog__title {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -998,7 +997,7 @@ a:hover {
 .learning-objectives li {
   padding: 8px 0;
   font-size: 14px;
-  color: #4b5563;
+  color: var(--text-secondary);
   position: relative;
   padding-left: 24px;
 }
@@ -1007,14 +1006,14 @@ a:hover {
   content: "✓";
   position: absolute;
   left: 0;
-  color: #059669;
+  color: var(--success);
   font-weight: bold;
 }
 
 .section-content {
   font-size: 16px;
   line-height: 1.7;
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 .section-content h2 {
@@ -1029,7 +1028,7 @@ a:hover {
 }
 
 .section-content code {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
@@ -1037,8 +1036,8 @@ a:hover {
 }
 
 .section-content pre {
-  background-color: #1f2937;
-  color: #f9fafb;
+  background-color: var(--bg-primary);
+  color: var(--text-inverse);
   padding: 16px;
   border-radius: 8px;
   overflow-x: auto;
@@ -1130,6 +1129,6 @@ select:focus {
 }
 
 /* Utility classes */
-.text-balance {
-  text-wrap: balance;
+  .text-balance {
+    text-wrap: balance;
 }
