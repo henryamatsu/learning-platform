@@ -5,6 +5,7 @@
   --bg-primary: #1f2937;
   --bg-secondary: #111827;
   --bg-tertiary: #374151;
+  --bg-accent: #1e3a8a;
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
@@ -16,6 +17,7 @@
   --hover-bg: #374151;
   --progress-bg: #374151;
   --card-bg: #1f2937;
+  --section-nav-current: #1e3a8a;
 }
 
 /* Blue Theme */
@@ -23,6 +25,7 @@
   --brand-primary: #1d4ed8;
   --brand-secondary: #1e40af;
   --text-accent: #1d4ed8;
-  --bg-accent: #dbeafe;
+  --bg-accent: #bfdbfe;
   --card-bg: #f8fafc;
+  --section-nav-current: #bfdbfe;
 }

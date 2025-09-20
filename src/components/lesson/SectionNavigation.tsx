@@ -53,6 +53,15 @@ export function SectionNavigation({
     return sectionIndex <= currentSection || completedSections.includes(sectionIndex);
   };
 
+  const canNavigateToPrevious = () => {
+    return currentSection > 0;
+  };
+
+  const canNavigateToNext = () => {
+    const nextSection = currentSection + 1;
+    return nextSection < totalSections && canNavigateToSection(nextSection) && canNavigateNext;
+  };
+
   return (
     <div className="section-navigation">
       <div className="section-navigation__header">
@@ -99,7 +108,7 @@ export function SectionNavigation({
         <Button
           variant="secondary"
           onClick={onPrevious}
-          disabled={currentSection === 0 || !onPrevious}
+          disabled={!canNavigateToPrevious() || !onPrevious}
           className="section-navigation__button"
         >
           ← Previous Section
@@ -111,7 +120,7 @@ export function SectionNavigation({
         
         <Button
           onClick={onNext}
-          disabled={!canNavigateNext || currentSection >= totalSections - 1 || !onNext}
+          disabled={!canNavigateToNext() || !onNext}
           className="section-navigation__button"
         >
           Next Section →
