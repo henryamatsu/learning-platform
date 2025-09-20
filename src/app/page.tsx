@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "../components/ui/Button";
 import {
   Card,
@@ -8,10 +9,54 @@ import {
   CardContent,
   CardFooter,
 } from "../components/ui/Card";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { useLessons } from "../hooks/useLessons";
+import { logUserAction } from "../lib/utils/errorLogger";
 
 export default function CurrentLessonsPage() {
-  const { lessons, loading, error, refetch } = useLessons();
+  const { lessons, loading, error, refetch, deleteLesson } = useLessons();
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    lessonId: string;
+    lessonTitle: string;
+  }>({
+    isOpen: false,
+    lessonId: "",
+    lessonTitle: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (lessonId: string, lessonTitle: string) => {
+    logUserAction("delete_lesson_dialog_opened", { lessonId, lessonTitle });
+    setDeleteDialog({
+      isOpen: true,
+      lessonId,
+      lessonTitle,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    const success = await deleteLesson(deleteDialog.lessonId);
+    
+    if (success) {
+      logUserAction("delete_lesson_confirmed", { 
+        lessonId: deleteDialog.lessonId,
+        lessonTitle: deleteDialog.lessonTitle 
+      });
+    }
+    
+    setIsDeleting(false);
+    setDeleteDialog({ isOpen: false, lessonId: "", lessonTitle: "" });
+  };
+
+  const handleDeleteCancel = () => {
+    logUserAction("delete_lesson_cancelled", { 
+      lessonId: deleteDialog.lessonId 
+    });
+    setDeleteDialog({ isOpen: false, lessonId: "", lessonTitle: "" });
+  };
 
   if (loading) {
     return (
@@ -70,7 +115,8 @@ export default function CurrentLessonsPage() {
   }
 
   return (
-    <div>
+    <ErrorBoundary>
+      <div>
       <div className="page-header">
         <h1 className="page-title">Your Lessons</h1>
         <p className="page-description">
@@ -149,12 +195,33 @@ export default function CurrentLessonsPage() {
                       View Details
                     </Button>
                   </Link>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleDeleteClick(lesson.id, lesson.title)}
+                    className="lesson-card__delete-btn"
+                  >
+                    🗑️ Delete
+                  </Button>
                 </div>
               </CardFooter>
             </Card>
           );
         })}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title="Delete Lesson"
+        message={`Are you sure you want to delete "${deleteDialog.lessonTitle}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmVariant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        loading={isDeleting}
+      />
     </div>
+    </ErrorBoundary>
   );
 }

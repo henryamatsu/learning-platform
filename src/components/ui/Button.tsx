@@ -3,7 +3,7 @@ import "./Button.css";
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   size?: "small" | "medium" | "large";
   onClick?: () => void;
   disabled?: boolean;

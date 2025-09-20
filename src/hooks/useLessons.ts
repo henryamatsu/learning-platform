@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { Lesson, LessonWithProgress } from "@/lib/types/lesson";
+import { apiRequest } from "@/lib/utils/apiErrorHandler";
+import { logApiError, logUserAction } from "@/lib/utils/errorLogger";
 
 export interface UseLessonsReturn {
   lessons: LessonWithProgress[];
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
+  deleteLesson: (lessonId: string) => Promise<boolean>;
 }
 
 /**
@@ -23,20 +26,11 @@ export function useLessons(): UseLessonsReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/lessons");
-      if (!response.ok) {
-        throw new Error(`Failed to fetch lessons: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch lessons");
-      }
-
+      const data = await apiRequest("/api/lessons");
       setLessons(data.lessons || []);
-    } catch (err) {
-      console.error("Error fetching lessons:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch lessons");
+    } catch (err: any) {
+      logApiError("/api/lessons", "GET", err.status || 0, err);
+      setError(err.message || "Failed to fetch lessons");
       setLessons([]);
     } finally {
       setLoading(false);
@@ -47,11 +41,31 @@ export function useLessons(): UseLessonsReturn {
     fetchLessons();
   }, [fetchLessons]);
 
+  const deleteLesson = useCallback(async (lessonId: string): Promise<boolean> => {
+    try {
+      logUserAction("delete_lesson_attempt", { lessonId });
+      
+      await apiRequest(`/api/lessons/${lessonId}`, {
+        method: "DELETE",
+      });
+
+      // Remove from local state
+      setLessons(prev => prev.filter(item => item.lesson.id !== lessonId));
+      
+      logUserAction("delete_lesson_success", { lessonId });
+      return true;
+    } catch (err: any) {
+      logApiError(`/api/lessons/${lessonId}`, "DELETE", err.status || 0, err);
+      return false;
+    }
+  }, []);
+
   return {
     lessons,
     loading,
     error,
     refetch: fetchLessons,
+    deleteLesson,
   };
 }
 
@@ -83,24 +97,12 @@ export function useLesson(lessonId: string): UseLessonReturn {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/lessons/${lessonId}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error("Lesson not found");
-        }
-        throw new Error(`Failed to fetch lesson: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch lesson");
-      }
-
+      const data = await apiRequest(`/api/lessons/${lessonId}`);
       setLesson(data.lesson);
       setProgress(data.progress);
-    } catch (err) {
-      console.error("Error fetching lesson:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch lesson");
+    } catch (err: any) {
+      logApiError(`/api/lessons/${lessonId}`, "GET", err.status || 0, err);
+      setError(err.message || "Failed to fetch lesson");
       setLesson(null);
       setProgress(null);
     } finally {
