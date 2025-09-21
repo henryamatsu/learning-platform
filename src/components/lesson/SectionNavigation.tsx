@@ -33,11 +33,11 @@ export function SectionNavigation({
       return 'current';
     } else if (sectionIndex < currentSection) {
       return 'available';
-    } else if (sectionIndex === currentSection + 1 && completedSections.includes(currentSection)) {
-      // Next section is available if current section is completed
-      return 'available';
     } else {
-      return 'locked';
+      // Check if this section should be unlocked based on completed sections
+      // A section is available if the previous section is completed
+      const previousSectionCompleted = sectionIndex === 0 || completedSections.includes(sectionIndex - 1);
+      return previousSectionCompleted ? 'available' : 'locked';
     }
   };
 
@@ -52,10 +52,14 @@ export function SectionNavigation({
   };
 
   const canNavigateToSection = (sectionIndex: number) => {
-    // Can navigate to completed sections, current section, or next section if current is completed
-    return sectionIndex <= currentSection || 
-           completedSections.includes(sectionIndex) ||
-           (sectionIndex === currentSection + 1 && completedSections.includes(currentSection));
+    // Can navigate to completed sections, current section, or any unlocked section
+    if (sectionIndex <= currentSection || completedSections.includes(sectionIndex)) {
+      return true;
+    }
+    
+    // Check if this section should be unlocked based on completed sections
+    // A section is navigable if the previous section is completed
+    return sectionIndex === 0 || completedSections.includes(sectionIndex - 1);
   };
 
   const canNavigateToPrevious = () => {

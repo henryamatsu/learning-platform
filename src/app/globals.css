@@ -555,6 +555,10 @@ a:hover {
   align-items: start;
 }
 
+.lesson-sidebar {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
   .lesson-content {
     grid-template-columns: 1fr;
