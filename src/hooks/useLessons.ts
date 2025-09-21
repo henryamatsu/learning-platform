@@ -148,30 +148,21 @@ export function useSectionNavigation(
 
   // Initialize from progress data
   useEffect(() => {
-    console.log("🔍 Progress parsing - Raw progress:", progress);
-    console.log("🔍 Progress parsing - Lesson sections:", lesson?.sections?.map(s => s.id));
-    
     if (progress && progress.sectionProgress) {
-      console.log("🔍 Progress parsing - Section progress:", progress.sectionProgress);
-      
       // Parse completed sections from progress data
       const completed = progress.sectionProgress
         .filter((sp: any) => sp.completedAt) // Check if section is completed
         .map((sp: any) => {
           // Find the section index by matching section ID
           if (lesson && lesson.sections) {
-            const index = lesson.sections.findIndex(section => section.id === sp.sectionId);
-            console.log(`🔍 Progress parsing - Section ${sp.sectionId} maps to index ${index}`);
-            return index;
+            return lesson.sections.findIndex(section => section.id === sp.sectionId);
           }
           return -1;
         })
         .filter((index: number) => index !== -1); // Remove invalid indices
       
-      console.log("🔍 Progress parsing - Final completed sections:", completed);
       setCompletedSections(completed);
     } else {
-      console.log("🔍 Progress parsing - No progress data, setting empty");
       setCompletedSections([]);
     }
   }, [progress, lesson]);
@@ -207,24 +198,12 @@ export function useSectionNavigation(
   );
 
   const markSectionComplete = useCallback(async (sectionIndex: number) => {
-    console.log("🎯 markSectionComplete called with sectionIndex:", sectionIndex);
-    console.log("🎯 Current completedSections:", completedSections);
-    
     setCompletedSections((prev) => {
-      console.log("🎯 Previous completed sections:", prev);
-      
       if (!prev.includes(sectionIndex)) {
         const newCompleted = [...prev, sectionIndex];
-        console.log("🎯 New completed sections:", newCompleted);
         
         // Persist to database
         if (lesson?.id) {
-          console.log("🎯 Saving to database - lesson ID:", lesson.id);
-          console.log("🎯 Saving to database - payload:", {
-            currentSection,
-            completedSections: newCompleted
-          });
-          
           fetch(`/api/lessons/${lesson.id}/progress`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -235,21 +214,17 @@ export function useSectionNavigation(
           })
           .then(response => response.json())
           .then(data => {
-            console.log("🎯 Database response:", data);
             if (data.success && onProgressUpdate) {
-              console.log("🎯 Calling onProgressUpdate to refresh data");
               // Refresh the progress data from parent
               onProgressUpdate();
             }
           })
           .catch(error => {
-            console.error('🎯 Failed to save progress:', error);
+            console.error('Failed to save progress:', error);
           });
         }
         
         return newCompleted;
-      } else {
-        console.log("🎯 Section already completed, no change");
       }
       return prev;
     });
