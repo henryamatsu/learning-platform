@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import { Button } from "../../../components/ui/Button";
 import {
   Card,
@@ -51,6 +52,10 @@ export default function LessonPage({ params }: LessonPageProps) {
   const handleSectionChange = (sectionIndex: number) => {
     goToSection(sectionIndex);
   };
+
+  const handleQuizStateChange = useCallback((state: any) => {
+    saveQuizState(currentSection, state);
+  }, [saveQuizState, currentSection]);
 
   if (loading) {
     return (
@@ -190,7 +195,7 @@ export default function LessonPage({ params }: LessonPageProps) {
                     questions={currentSectionData.quiz.questions}
                     onComplete={handleQuizComplete}
                     initialState={getQuizState(currentSection)}
-                    onStateChange={(state) => saveQuizState(currentSection, state)}
+                    onStateChange={handleQuizStateChange}
                   />
               </CardContent>
             </Card>

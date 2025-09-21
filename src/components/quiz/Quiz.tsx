@@ -50,9 +50,9 @@ export const Quiz: React.FC<QuizProps> = ({
     initialState?.checkedAnswers || new Array(questions.length).fill(false)
   );
 
-  // Save state changes
+  // Save state changes (but not on initial render)
   useEffect(() => {
-    if (onStateChange) {
+    if (onStateChange && (currentQuestion > 0 || selectedAnswers.some(a => a !== -1) || showResults || submitted)) {
       onStateChange({
         currentQuestion,
         selectedAnswers,
