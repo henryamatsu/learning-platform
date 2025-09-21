@@ -8,10 +8,17 @@ const globalForPrisma = globalThis as unknown as {
 
 // Create database client for production, fallback to local SQLite for development
 function createPrismaClient() {
+  console.log("Environment check:", {
+    NODE_ENV: process.env.NODE_ENV,
+    TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL ? "SET" : "NOT SET",
+    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN ? "SET" : "NOT SET",
+    DATABASE_URL: process.env.DATABASE_URL,
+  });
+
   // Use Turso if environment variables are available (regardless of NODE_ENV)
   if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
     // Production: Use Turso (hosted libSQL)
-    console.log("Using Turso database for production");
+    console.log("✅ Using Turso database:", process.env.TURSO_DATABASE_URL);
     const libsql = createClient({
       url: process.env.TURSO_DATABASE_URL,
       authToken: process.env.TURSO_AUTH_TOKEN,
@@ -22,7 +29,7 @@ function createPrismaClient() {
   }
 
   // Development: Use local SQLite
-  console.log("Using local SQLite database for development");
+  console.log("❌ Using local SQLite database - Turso env vars not found");
   return new PrismaClient({
     datasources: {
       db: {
