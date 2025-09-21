@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import "./Input.css";
 
 interface InputProps {
@@ -26,7 +26,8 @@ export const Input: React.FC<InputProps> = ({
   className = "",
   id,
 }) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = id || generatedId;
 
   return (
     <div className={`input-group ${className}`}>
@@ -76,8 +77,8 @@ export const Textarea: React.FC<TextareaProps> = ({
   id,
   rows = 4,
 }) => {
-  const textareaId =
-    id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const textareaId = id || generatedId;
 
   return (
     <div className={`input-group ${className}`}>

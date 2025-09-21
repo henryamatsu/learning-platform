@@ -39,21 +39,26 @@ export default function CreateLessonPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("handleSubmit called!");
     e.preventDefault();
+    console.log("Form submitted with URL:", videoUrl);
     setError("");
     setProgress(null);
     setCreatedLessonId(null);
 
     if (!videoUrl.trim()) {
+      console.log("Error: No URL provided");
       setError("Please enter a YouTube video URL");
       return;
     }
 
     if (!validateYouTubeUrl(videoUrl)) {
+      console.log("Error: Invalid YouTube URL");
       setError("Please enter a valid YouTube video URL");
       return;
     }
 
+    console.log("Starting lesson creation...");
     setIsLoading(true);
 
     try {
@@ -160,6 +165,7 @@ export default function CreateLessonPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="create-lesson-form">
               <Input
+                id="youtube-url-input"
                 label="YouTube Video URL"
                 type="url"
                 placeholder="https://www.youtube.com/watch?v=..."
@@ -228,43 +234,43 @@ export default function CreateLessonPage() {
                   )}
                 </div>
               )}
+
+              <div className="create-lesson__actions">
+                {createdLessonId ? (
+                  <Button
+                    onClick={() => router.push(`/lesson/${createdLessonId}`)}
+                    className="create-lesson__submit"
+                  >
+                    View Lesson
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      type="submit"
+                      disabled={isLoading || !videoUrl.trim()}
+                      className="create-lesson__submit"
+                    >
+                      {isLoading ? "Creating Lesson..." : "Create Lesson"}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      disabled={isLoading}
+                      onClick={() => {
+                        setVideoUrl("");
+                        setError("");
+                        setProgress(null);
+                        setCreatedLessonId(null);
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  </>
+                )}
+              </div>
             </form>
           </CardContent>
 
-          <CardFooter>
-            <div className="create-lesson__actions">
-              {createdLessonId ? (
-                <Button
-                  onClick={() => router.push(`/lesson/${createdLessonId}`)}
-                  className="create-lesson__submit"
-                >
-                  View Lesson
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    type="submit"
-                    disabled={isLoading || !videoUrl.trim()}
-                    className="create-lesson__submit"
-                  >
-                    {isLoading ? "Creating Lesson..." : "Create Lesson"}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    disabled={isLoading}
-                    onClick={() => {
-                      setVideoUrl("");
-                      setError("");
-                      setProgress(null);
-                      setCreatedLessonId(null);
-                    }}
-                  >
-                    Clear
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardFooter>
+          <CardFooter></CardFooter>
         </Card>
 
         <Card className="create-lesson-tips">
