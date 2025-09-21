@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../../../../../lib/prisma';
+import prisma from '../../../../../lib/prisma';
 
 // PUT /api/lessons/[id]/progress - Update lesson progress
 export async function PUT(
@@ -17,6 +17,21 @@ export async function PUT(
       );
     }
 
+    // Get the lesson to know total sections
+    const lesson = await prisma.lesson.findUnique({
+      where: { id },
+      include: { sections: true }
+    });
+
+    if (!lesson) {
+      return NextResponse.json(
+        { success: false, message: 'Lesson not found' },
+        { status: 404 }
+      );
+    }
+
+    const totalSections = lesson.sections.length;
+
     // First, find or create user progress
     let progress = await prisma.userProgress.findFirst({
       where: {
@@ -31,8 +46,8 @@ export async function PUT(
         data: {
           lessonId: id,
           userId: 'default',
-          currentSection: currentSection || 0,
-          completed: false
+          totalSections: totalSections,
+          completedSections: completedSections ? completedSections.length : 0
         }
       });
     } else {
@@ -40,47 +55,33 @@ export async function PUT(
       progress = await prisma.userProgress.update({
         where: { id: progress.id },
         data: {
-          currentSection: currentSection || progress.currentSection,
-          updatedAt: new Date()
+          completedSections: completedSections ? completedSections.length : progress.completedSections,
+          completedAt: completedSections && completedSections.length >= totalSections ? new Date() : null
         }
       });
     }
 
     // Update section progress
     if (completedSections && Array.isArray(completedSections)) {
-      // First, get the lesson to know total sections
-      const lesson = await prisma.lesson.findUnique({
-        where: { id },
-        include: { sections: true }
+      // Delete existing section progress for this user and lesson
+      await prisma.sectionProgress.deleteMany({
+        where: { 
+          userProgressId: progress.id,
+          userId: 'default'
+        }
       });
 
-      if (lesson) {
-        // Delete existing section progress
-        await prisma.sectionProgress.deleteMany({
-          where: { progressId: progress.id }
-        });
-
-        // Create new section progress records
-        const sectionProgressData = completedSections.map((sectionIndex: number) => ({
-          progressId: progress.id,
-          sectionOrder: sectionIndex + 1, // Convert to 1-based
-          completed: true
-        }));
-
-        if (sectionProgressData.length > 0) {
-          await prisma.sectionProgress.createMany({
-            data: sectionProgressData
-          });
-        }
-
-        // Update overall completion status
-        const totalSections = lesson.sections.length;
-        const isCompleted = completedSections.length >= totalSections;
-        
-        if (isCompleted !== progress.completed) {
-          await prisma.userProgress.update({
-            where: { id: progress.id },
-            data: { completed: isCompleted }
+      // Create new section progress records
+      for (const sectionIndex of completedSections) {
+        const sectionId = lesson.sections[sectionIndex]?.id;
+        if (sectionId) {
+          await prisma.sectionProgress.create({
+            data: {
+              userId: 'default',
+              sectionId: sectionId,
+              userProgressId: progress.id,
+              completedAt: new Date()
+            }
           });
         }
       }
@@ -90,14 +91,18 @@ export async function PUT(
     const updatedProgress = await prisma.userProgress.findUnique({
       where: { id: progress.id },
       include: {
-        sectionProgress: true
+        sectionProgress: {
+          include: {
+            section: true
+          }
+        }
       }
     });
 
     return NextResponse.json({
-      progress: updatedProgress,
       success: true,
-      message: 'Progress updated successfully'
+      message: 'Progress updated successfully',
+      progress: updatedProgress
     });
   } catch (error) {
     console.error('Error updating progress:', error);

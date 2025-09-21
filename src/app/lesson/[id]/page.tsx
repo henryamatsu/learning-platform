@@ -32,9 +32,7 @@ export default function LessonPage({ params }: LessonPageProps) {
     goToSection,
     completedSections,
     markSectionComplete,
-    saveQuizState,
-    getQuizState,
-  } = useSectionNavigation(lesson, progress);
+  } = useSectionNavigation(lesson, progress, refetch);
 
   const handleQuizComplete = (score: number, answers: number[]) => {
     console.log("Quiz completed:", { score, answers });

@@ -140,28 +140,35 @@ export interface UseSectionReturn {
  */
 export function useSectionNavigation(
   lesson: Lesson | null,
-  progress: any = null
+  progress: any = null,
+  onProgressUpdate?: () => void
 ): UseSectionReturn {
   const [currentSection, setCurrentSection] = useState(0);
   const [completedSections, setCompletedSections] = useState<number[]>([]);
 
   // Initialize from progress data
   useEffect(() => {
-    if (progress) {
-      setCurrentSection(progress.currentSection || 0);
-      // Parse completed sections from progress data if available
-      if (progress.sectionProgress) {
-        const completed = progress.sectionProgress
-          .filter((sp: any) => sp.completed)
-          .map((sp: any) => sp.sectionOrder - 1); // Convert to 0-based index
-        setCompletedSections(completed);
-      }
+    if (progress && progress.sectionProgress) {
+      // Parse completed sections from progress data
+      const completed = progress.sectionProgress
+        .filter((sp: any) => sp.completedAt) // Check if section is completed
+        .map((sp: any) => {
+          // Find the section index by matching section ID
+          if (lesson && lesson.sections) {
+            return lesson.sections.findIndex(section => section.id === sp.sectionId);
+          }
+          return -1;
+        })
+        .filter((index: number) => index !== -1); // Remove invalid indices
+      
+      setCompletedSections(completed);
     }
-  }, [progress]);
+  }, [progress, lesson]);
 
   const totalSections = lesson?.sections?.length || 0;
 
-  const canNavigateNext = currentSection < totalSections - 1;
+  const canNavigateNext = currentSection < totalSections - 1 && 
+    (completedSections.includes(currentSection) || currentSection === 0);
   const canNavigatePrevious = currentSection > 0;
 
   const goToNextSection = useCallback(() => {
@@ -202,7 +209,15 @@ export function useSectionNavigation(
               currentSection,
               completedSections: newCompleted
             })
-          }).catch(error => {
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success && onProgressUpdate) {
+              // Refresh the progress data from parent
+              onProgressUpdate();
+            }
+          })
+          .catch(error => {
             console.error('Failed to save progress:', error);
           });
         }
@@ -211,7 +226,7 @@ export function useSectionNavigation(
       }
       return prev;
     });
-  }, [lesson?.id, currentSection]);
+  }, [lesson?.id, currentSection, onProgressUpdate]);
 
 
   return {
