@@ -269,8 +269,6 @@ export default function CreateLessonPage() {
               </div>
             </form>
           </CardContent>
-
-          <CardFooter></CardFooter>
         </Card>
 
         <Card className="create-lesson-tips">
