@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { GetLessonResponse } from '@/lib/types/lesson';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { GetLessonResponse } from "@/lib/types/lesson";
 
 // GET /api/lessons/[id] - Get a specific lesson
 export async function GET(
@@ -12,9 +12,9 @@ export async function GET(
 
     if (!id) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Lesson ID is required' 
+        {
+          success: false,
+          message: "Lesson ID is required",
         },
         { status: 400 }
       );
@@ -25,28 +25,28 @@ export async function GET(
       include: {
         sections: {
           orderBy: {
-            order: 'asc'
+            order: "asc",
           },
           include: {
-            quiz: true
-          }
+            quiz: true,
+          },
         },
         progress: {
           where: {
-            userId: 'default' // For now, using default user
+            userId: "default", // For now, using default user
           },
           include: {
-            sectionProgress: true
-          }
-        }
-      }
+            sectionProgress: true,
+          },
+        },
+      },
     });
 
     if (!lesson) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Lesson not found' 
+        {
+          success: false,
+          message: "Lesson not found",
         },
         { status: 404 }
       );
@@ -55,29 +55,40 @@ export async function GET(
     // Transform the data to match our TypeScript interfaces
     const transformedLesson = {
       ...lesson,
-      sections: lesson.sections.map(section => ({
+      sections: lesson.sections.map((section) => ({
         ...section,
         learningObjectives: JSON.parse(section.learningObjectives),
-        quiz: section.quiz ? {
-          ...section.quiz,
-          questions: JSON.parse(section.quiz.questions)
-        } : undefined
-      }))
+        quiz: section.quiz
+          ? {
+              ...section.quiz,
+              questions: JSON.parse(section.quiz.questions),
+            }
+          : undefined,
+      })),
     };
 
     const response: GetLessonResponse = {
       lesson: transformedLesson,
-      progress: lesson.progress[0] || undefined,
-      success: true
+      progress: lesson.progress[0]
+        ? {
+            ...lesson.progress[0],
+            completedAt: lesson.progress[0].completedAt || undefined,
+            sectionProgress: lesson.progress[0].sectionProgress.map((sp) => ({
+              ...sp,
+              completedAt: sp.completedAt || undefined,
+            })),
+          }
+        : undefined,
+      success: true,
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Error fetching lesson:', error);
+    console.error("Error fetching lesson:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to fetch lesson' 
+      {
+        success: false,
+        message: "Failed to fetch lesson",
       },
       { status: 500 }
     );
@@ -96,9 +107,9 @@ export async function PUT(
 
     if (!id) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Lesson ID is required' 
+        {
+          success: false,
+          message: "Lesson ID is required",
         },
         { status: 400 }
       );
@@ -109,44 +120,46 @@ export async function PUT(
       data: {
         ...(title && { title }),
         ...(videoUrl && { videoUrl }),
-        ...(videoId && { videoId })
+        ...(videoId && { videoId }),
       },
       include: {
         sections: {
           orderBy: {
-            order: 'asc'
+            order: "asc",
           },
           include: {
-            quiz: true
-          }
-        }
-      }
+            quiz: true,
+          },
+        },
+      },
     });
 
     // Transform the response data
     const transformedLesson = {
       ...lesson,
-      sections: lesson.sections.map(section => ({
+      sections: lesson.sections.map((section) => ({
         ...section,
         learningObjectives: JSON.parse(section.learningObjectives),
-        quiz: section.quiz ? {
-          ...section.quiz,
-          questions: JSON.parse(section.quiz.questions)
-        } : undefined
-      }))
+        quiz: section.quiz
+          ? {
+              ...section.quiz,
+              questions: JSON.parse(section.quiz.questions),
+            }
+          : undefined,
+      })),
     };
 
     return NextResponse.json({
       lesson: transformedLesson,
       success: true,
-      message: 'Lesson updated successfully'
+      message: "Lesson updated successfully",
     });
   } catch (error) {
-    console.error('Error updating lesson:', error);
+    console.error("Error updating lesson:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to update lesson' 
+      {
+        success: false,
+        message: "Failed to update lesson",
       },
       { status: 500 }
     );
@@ -163,28 +176,28 @@ export async function DELETE(
 
     if (!id) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Lesson ID is required' 
+        {
+          success: false,
+          message: "Lesson ID is required",
         },
         { status: 400 }
       );
     }
 
     await prisma.lesson.delete({
-      where: { id }
+      where: { id },
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Lesson deleted successfully'
+      message: "Lesson deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting lesson:', error);
+    console.error("Error deleting lesson:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to delete lesson' 
+      {
+        success: false,
+        message: "Failed to delete lesson",
       },
       { status: 500 }
     );
