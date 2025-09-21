@@ -12,7 +12,13 @@ import {
 } from "../../components/ui/Card";
 
 interface LessonCreationProgress {
-  step: 'validating' | 'extracting' | 'generating' | 'saving' | 'completed' | 'error';
+  step:
+    | "validating"
+    | "extracting"
+    | "generating"
+    | "saving"
+    | "completed"
+    | "error";
   message: string;
   progress: number;
   error?: string;
@@ -51,10 +57,10 @@ export default function CreateLessonPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/lessons/create', {
-        method: 'POST',
+      const response = await fetch("/api/lessons/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ videoUrl }),
       });
@@ -62,7 +68,7 @@ export default function CreateLessonPage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Failed to create lesson');
+        throw new Error(data.message || "Failed to create lesson");
       }
 
       // Show final progress
@@ -74,21 +80,20 @@ export default function CreateLessonPage() {
       // Set the created lesson ID for redirect
       if (data.lesson && data.lesson.id) {
         setCreatedLessonId(data.lesson.id);
-        
+
         // Auto-redirect after 2 seconds
         setTimeout(() => {
           router.push(`/lesson/${data.lesson.id}`);
         }, 2000);
       }
-
     } catch (err) {
-      console.error('Error creating lesson:', err);
-      setError(err instanceof Error ? err.message : 'Failed to create lesson');
+      console.error("Error creating lesson:", err);
+      setError(err instanceof Error ? err.message : "Failed to create lesson");
       setProgress({
-        step: 'error',
-        message: 'Failed to create lesson',
+        step: "error",
+        message: "Failed to create lesson",
         progress: 0,
-        error: err instanceof Error ? err.message : 'Unknown error'
+        error: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
       setIsLoading(false);
@@ -98,26 +103,36 @@ export default function CreateLessonPage() {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoUrl(e.target.value);
     if (error) setError("");
-    if (progress?.step === 'error') setProgress(null);
+    if (progress?.step === "error") setProgress(null);
   };
 
   const getProgressColor = (step: string) => {
     switch (step) {
-      case 'completed': return '#059669';
-      case 'error': return '#ef4444';
-      default: return '#3b82f6';
+      case "completed":
+        return "#059669";
+      case "error":
+        return "#ef4444";
+      default:
+        return "#3b82f6";
     }
   };
 
   const getProgressIcon = (step: string) => {
     switch (step) {
-      case 'validating': return '🔍';
-      case 'extracting': return '📝';
-      case 'generating': return '🤖';
-      case 'saving': return '💾';
-      case 'completed': return '✅';
-      case 'error': return '❌';
-      default: return '⏳';
+      case "validating":
+        return "🔍";
+      case "extracting":
+        return "📝";
+      case "generating":
+        return "🤖";
+      case "saving":
+        return "💾";
+      case "completed":
+        return "✅";
+      case "error":
+        return "❌";
+      default:
+        return "⏳";
     }
   };
 
@@ -158,7 +173,7 @@ export default function CreateLessonPage() {
               <div className="create-lesson__info">
                 <h4>What happens next?</h4>
                 <ul className="create-lesson__steps">
-                  <li>🎥 We'll extract the video transcript</li>
+                  <li>🎥 We\&apos;ll extract the video transcript</li>
                   <li>
                     🤖 AI analyzes the content and creates structured sections
                   </li>
@@ -173,19 +188,25 @@ export default function CreateLessonPage() {
                   {progress ? (
                     <div className="progress-display">
                       <div className="progress-header">
-                        <span className="progress-icon">{getProgressIcon(progress.step)}</span>
-                        <span className="progress-message">{progress.message}</span>
+                        <span className="progress-icon">
+                          {getProgressIcon(progress.step)}
+                        </span>
+                        <span className="progress-message">
+                          {progress.message}
+                        </span>
                       </div>
                       <div className="progress-bar">
-                        <div 
+                        <div
                           className="progress-fill"
-                          style={{ 
+                          style={{
                             width: `${progress.progress}%`,
-                            backgroundColor: getProgressColor(progress.step)
+                            backgroundColor: getProgressColor(progress.step),
                           }}
                         />
                       </div>
-                      <div className="progress-percentage">{progress.progress}%</div>
+                      <div className="progress-percentage">
+                        {progress.progress}%
+                      </div>
                       {progress.error && (
                         <div className="progress-error">
                           <strong>Error:</strong> {progress.error}
@@ -198,7 +219,7 @@ export default function CreateLessonPage() {
                       Starting lesson creation...
                     </div>
                   )}
-                  
+
                   {createdLessonId && (
                     <div className="success-message">
                       <p>✅ Lesson created successfully!</p>
