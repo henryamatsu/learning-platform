@@ -36,6 +36,9 @@ export default function LessonPage({ params }: LessonPageProps) {
 
   const handleQuizComplete = (score: number, answers: number[]) => {
     console.log("Quiz completed:", { score, answers });
+    console.log("Current section:", currentSection);
+    console.log("Completed sections before:", completedSections);
+    
     // Mark current section as complete
     markSectionComplete(currentSection);
 
@@ -197,6 +200,14 @@ export default function LessonPage({ params }: LessonPageProps) {
         </div>
 
         <div className="lesson-sidebar">
+          {/* DEBUG INFO */}
+          <div style={{background: 'red', color: 'white', padding: '10px', marginBottom: '10px'}}>
+            <div>Current Section: {currentSection}</div>
+            <div>Completed Sections: [{completedSections.join(', ')}]</div>
+            <div>Can Navigate Next: {canNavigateNext ? 'YES' : 'NO'}</div>
+            <div>Progress Data: {JSON.stringify(progress?.sectionProgress || 'none')}</div>
+          </div>
+          
           <SectionNavigation
             currentSection={currentSection}
             totalSections={lesson.sections.length}
