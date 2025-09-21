@@ -244,7 +244,6 @@ export default function CreateLessonPage() {
                 <>
                   <Button
                     type="submit"
-                    onClick={handleSubmit}
                     disabled={isLoading || !videoUrl.trim()}
                     className="create-lesson__submit"
                   >

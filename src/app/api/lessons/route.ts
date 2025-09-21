@@ -1,63 +1,74 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { GetLessonsResponse } from '@/lib/types/lesson';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { GetLessonsResponse } from "@/lib/types/lesson";
 
 // GET /api/lessons - Get all lessons
 export async function GET(request: NextRequest) {
   try {
-    const userId = 'default'; // In a real app, get from authentication
+    const userId = "default"; // In a real app, get from authentication
 
     const lessons = await prisma.lesson.findMany({
       include: {
         sections: {
           orderBy: {
-            order: 'asc'
+            order: "asc",
           },
           include: {
-            quiz: true
-          }
+            quiz: true,
+          },
         },
         progress: {
           where: { userId },
           include: {
-            sectionProgress: true
-          }
-        }
+            sectionProgress: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     // Transform the data to match our LessonWithProgress interface
-    const transformedLessons = lessons.map(lesson => ({
+    const transformedLessons = lessons.map((lesson) => ({
       lesson: {
         ...lesson,
-        sections: lesson.sections.map(section => ({
+        sections: lesson.sections.map((section) => ({
           ...section,
           learningObjectives: JSON.parse(section.learningObjectives),
-          quiz: section.quiz ? {
-            ...section.quiz,
-            questions: JSON.parse(section.quiz.questions)
-          } : undefined
-        }))
+          quiz: section.quiz
+            ? {
+                ...section.quiz,
+                questions: JSON.parse(section.quiz.questions),
+              }
+            : undefined,
+        })),
       },
-      progress: lesson.progress[0] || null
+      progress: lesson.progress[0]
+        ? {
+            ...lesson.progress[0],
+            completedAt: lesson.progress[0].completedAt || undefined,
+            sectionProgress: lesson.progress[0].sectionProgress.map((sp) => ({
+              ...sp,
+              completedAt: sp.completedAt || undefined,
+            })),
+          }
+        : undefined,
     }));
 
     const response: GetLessonsResponse = {
       lessons: transformedLessons,
-      success: true
+      success: true,
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Error fetching lessons:', error);
+    console.error("Error fetching lessons:", error);
     return NextResponse.json(
-      { 
-        lessons: [], 
-        success: false, 
-        message: 'Failed to fetch lessons' 
+      {
+        lessons: [],
+        success: false,
+        message: "Failed to fetch lessons",
       },
       { status: 500 }
     );
@@ -72,9 +83,9 @@ export async function POST(request: NextRequest) {
 
     if (!title || !videoUrl || !videoId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: 'Missing required fields: title, videoUrl, videoId' 
+        {
+          success: false,
+          message: "Missing required fields: title, videoUrl, videoId",
         },
         { status: 400 }
       );
@@ -86,56 +97,63 @@ export async function POST(request: NextRequest) {
         videoUrl,
         videoId,
         sections: {
-          create: sections?.map((section: any, index: number) => ({
-            title: section.title,
-            summary: section.summary,
-            content: section.content,
-            learningObjectives: JSON.stringify(section.learningObjectives || []),
-            order: index + 1,
-            quiz: section.quiz ? {
-              create: {
-                questions: JSON.stringify(section.quiz.questions || [])
-              }
-            } : undefined
-          })) || []
-        }
+          create:
+            sections?.map((section: any, index: number) => ({
+              title: section.title,
+              summary: section.summary,
+              content: section.content,
+              learningObjectives: JSON.stringify(
+                section.learningObjectives || []
+              ),
+              order: index + 1,
+              quiz: section.quiz
+                ? {
+                    create: {
+                      questions: JSON.stringify(section.quiz.questions || []),
+                    },
+                  }
+                : undefined,
+            })) || [],
+        },
       },
       include: {
         sections: {
           orderBy: {
-            order: 'asc'
+            order: "asc",
           },
           include: {
-            quiz: true
-          }
-        }
-      }
+            quiz: true,
+          },
+        },
+      },
     });
 
     // Transform the response data
     const transformedLesson = {
       ...lesson,
-      sections: lesson.sections.map(section => ({
+      sections: lesson.sections.map((section) => ({
         ...section,
         learningObjectives: JSON.parse(section.learningObjectives),
-        quiz: section.quiz ? {
-          ...section.quiz,
-          questions: JSON.parse(section.quiz.questions)
-        } : undefined
-      }))
+        quiz: section.quiz
+          ? {
+              ...section.quiz,
+              questions: JSON.parse(section.quiz.questions),
+            }
+          : undefined,
+      })),
     };
 
     return NextResponse.json({
       lesson: transformedLesson,
       success: true,
-      message: 'Lesson created successfully'
+      message: "Lesson created successfully",
     });
   } catch (error) {
-    console.error('Error creating lesson:', error);
+    console.error("Error creating lesson:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to create lesson' 
+      {
+        success: false,
+        message: "Failed to create lesson",
       },
       { status: 500 }
     );
