@@ -62,7 +62,11 @@ export async function extractTranscript(
           };
         }
       } else if (jobResult.status === "failed") {
-        throw new Error(jobResult.error || "Transcript job failed");
+        throw new Error(
+          typeof jobResult.error === "string"
+            ? jobResult.error
+            : "Transcript job failed"
+        );
       } else {
         // Job is still processing, return job ID for polling
         return {
@@ -76,7 +80,10 @@ export async function extractTranscript(
       if (transcript && transcript.content) {
         return {
           success: true,
-          transcript: transcript.content,
+          transcript:
+            typeof transcript.content === "string"
+              ? transcript.content
+              : JSON.stringify(transcript.content),
         };
       }
     }
@@ -132,7 +139,10 @@ export async function checkTranscriptStatus(
       return {
         success: false,
         status: "failed",
-        error: response.error || "Transcript extraction failed",
+        error:
+          typeof response.error === "string"
+            ? response.error
+            : "Transcript extraction failed",
       };
     }
 
