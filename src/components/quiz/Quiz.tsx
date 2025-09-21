@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "../ui/Button";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/Card";
+import { useQuiz } from "../../hooks/useQuiz";
 import "./Quiz.css";
 
 interface QuizQuestion {
@@ -14,99 +15,87 @@ interface QuizQuestion {
 
 interface QuizProps {
   questions: QuizQuestion[];
+  quizId: string;
   onComplete?: (score: number, answers: number[]) => void;
   className?: string;
-  key?: string | number; // Add key prop to force re-render when section changes
-  initialState?: {
-    currentQuestion: number;
-    selectedAnswers: number[];
-    showResults: boolean;
-    submitted: boolean;
-    checkedAnswers: boolean[];
-  };
-  onStateChange?: (state: any) => void;
 }
 
 export const Quiz: React.FC<QuizProps> = ({
   questions,
+  quizId,
   onComplete,
   className = "",
-  initialState,
-  onStateChange,
 }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(
-    initialState?.currentQuestion || 0
-  );
-  const [selectedAnswers, setSelectedAnswers] = useState<number[]>(
-    initialState?.selectedAnswers || new Array(questions.length).fill(-1)
-  );
-  const [showResults, setShowResults] = useState(
-    initialState?.showResults || false
-  );
-  const [submitted, setSubmitted] = useState(
-    initialState?.submitted || false
-  );
-  const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>(
-    initialState?.checkedAnswers || new Array(questions.length).fill(false)
-  );
-
-  // Save state changes (but not on initial render)
-  useEffect(() => {
-    if (onStateChange && (currentQuestion > 0 || selectedAnswers.some(a => a !== -1) || showResults || submitted)) {
-      onStateChange({
-        currentQuestion,
-        selectedAnswers,
-        showResults,
-        submitted,
-        checkedAnswers,
-      });
-    }
-  }, [currentQuestion, selectedAnswers, showResults, submitted, checkedAnswers, onStateChange]);
+  const { quizState, saveQuizResult, updateQuizState, resetQuiz, loading, error } = useQuiz(quizId, questions.length);
+  const { currentQuestion, selectedAnswers, showResults, submitted, checkedAnswers } = quizState;
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (checkedAnswers[currentQuestion]) return;
 
     const newAnswers = [...selectedAnswers];
     newAnswers[currentQuestion] = answerIndex;
-    setSelectedAnswers(newAnswers);
+    updateQuizState({ selectedAnswers: newAnswers });
   };
 
   const handleCheckAnswer = () => {
     const newCheckedAnswers = [...checkedAnswers];
     newCheckedAnswers[currentQuestion] = true;
-    setCheckedAnswers(newCheckedAnswers);
+    updateQuizState({ checkedAnswers: newCheckedAnswers });
   };
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+      updateQuizState({ currentQuestion: currentQuestion + 1 });
+    } else {
+      handleSubmit();
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+      updateQuizState({ currentQuestion: currentQuestion - 1 });
     }
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-    setShowResults(true);
-
+  const handleSubmit = async () => {
     const score = selectedAnswers.reduce((acc, answer, index) => {
       return acc + (answer === questions[index].correctAnswer ? 1 : 0);
     }, 0);
 
+    // Save to database
+    await saveQuizResult(selectedAnswers, score, questions.length);
+
+    updateQuizState({ submitted: true, showResults: true });
     onComplete?.(score, selectedAnswers);
   };
 
   const handleRetake = () => {
-    setSelectedAnswers(new Array(questions.length).fill(-1));
-    setCheckedAnswers(new Array(questions.length).fill(false));
-    setCurrentQuestion(0);
-    setShowResults(false);
-    setSubmitted(false);
+    resetQuiz();
   };
+
+  if (loading) {
+    return (
+      <div className={`quiz ${className}`}>
+        <Card>
+          <CardContent>
+            <div className="quiz__loading">Loading quiz...</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`quiz ${className}`}>
+        <Card>
+          <CardContent>
+            <div className="quiz__error">Error: {error}</div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const isAnswered = selectedAnswers[currentQuestion] !== -1;
   const isChecked = checkedAnswers[currentQuestion];

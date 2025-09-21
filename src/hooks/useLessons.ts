@@ -133,9 +133,6 @@ export interface UseSectionReturn {
   goToSection: (sectionIndex: number) => void;
   completedSections: number[];
   markSectionComplete: (sectionIndex: number) => void;
-  quizStates: { [sectionIndex: number]: any };
-  saveQuizState: (sectionIndex: number, quizState: any) => void;
-  getQuizState: (sectionIndex: number) => any;
 }
 
 /**
@@ -147,7 +144,6 @@ export function useSectionNavigation(
 ): UseSectionReturn {
   const [currentSection, setCurrentSection] = useState(0);
   const [completedSections, setCompletedSections] = useState<number[]>([]);
-  const [quizStates, setQuizStates] = useState<{ [sectionIndex: number]: any }>({});
 
   // Initialize from progress data
   useEffect(() => {
@@ -217,16 +213,6 @@ export function useSectionNavigation(
     });
   }, [lesson?.id, currentSection]);
 
-  const saveQuizState = useCallback((sectionIndex: number, quizState: any) => {
-    setQuizStates(prev => ({
-      ...prev,
-      [sectionIndex]: quizState
-    }));
-  }, []);
-
-  const getQuizState = useCallback((sectionIndex: number) => {
-    return quizStates[sectionIndex] || null;
-  }, [quizStates]);
 
   return {
     currentSection,
@@ -238,9 +224,6 @@ export function useSectionNavigation(
     goToSection,
     completedSections,
     markSectionComplete,
-    quizStates,
-    saveQuizState,
-    getQuizState,
   };
 }
 

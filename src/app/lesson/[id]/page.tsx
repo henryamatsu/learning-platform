@@ -53,9 +53,6 @@ export default function LessonPage({ params }: LessonPageProps) {
     goToSection(sectionIndex);
   };
 
-  const handleQuizStateChange = useCallback((state: any) => {
-    saveQuizState(currentSection, state);
-  }, [saveQuizState, currentSection]);
 
   if (loading) {
     return (
@@ -193,9 +190,8 @@ export default function LessonPage({ params }: LessonPageProps) {
               <CardContent>
                   <Quiz
                     questions={currentSectionData.quiz.questions}
+                    quizId={currentSectionData.quiz.id}
                     onComplete={handleQuizComplete}
-                    initialState={getQuizState(currentSection)}
-                    onStateChange={handleQuizStateChange}
                   />
               </CardContent>
             </Card>
