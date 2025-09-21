@@ -33,7 +33,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    
+
     this.setState({
       error,
       errorInfo,
@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.props.onError?.(error, errorInfo);
 
     // In production, you might want to log this to an error reporting service
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Example: logErrorToService(error, errorInfo);
     }
   }
@@ -72,16 +72,14 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="error-boundary">
           <Card className="error-boundary__card">
             <CardHeader>
-              <h2 className="error-boundary__title">
-                ⚠️ Something went wrong
-              </h2>
+              <h2 className="error-boundary__title">⚠️ Something went wrong</h2>
               <p className="error-boundary__subtitle">
                 We encountered an unexpected error. Please try again.
               </p>
             </CardHeader>
 
             <CardContent>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env.NODE_ENV === "development" && this.state.error && (
                 <div className="error-boundary__details">
                   <h3>Error Details (Development Mode):</h3>
                   <pre className="error-boundary__error-text">
@@ -99,7 +97,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="error-boundary__suggestions">
                 <h3>What you can try:</h3>
                 <ul>
-                  <li>Click "Try Again" to retry the operation</li>
+                  <li>Click &quot;Try Again&quot; to retry the operation</li>
                   <li>Refresh the page to start over</li>
                   <li>Go back to the previous page</li>
                   <li>If the problem persists, please contact support</li>
@@ -109,14 +107,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <CardFooter>
               <div className="error-boundary__actions">
-                <Button onClick={this.handleRetry}>
-                  Try Again
-                </Button>
+                <Button onClick={this.handleRetry}>Try Again</Button>
                 <Button variant="secondary" onClick={this.handleReload}>
                   Refresh Page
                 </Button>
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   onClick={() => window.history.back()}
                 >
                   Go Back

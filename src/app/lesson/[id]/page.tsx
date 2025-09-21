@@ -36,7 +36,7 @@ export default function LessonPage({ params }: LessonPageProps) {
 
   const handleQuizComplete = (score: number, answers: number[]) => {
     console.log("Quiz completed:", { score, answers });
-    
+
     // Mark current section as complete
     markSectionComplete(currentSection);
 
@@ -52,7 +52,6 @@ export default function LessonPage({ params }: LessonPageProps) {
     goToSection(sectionIndex);
   };
 
-
   if (loading) {
     return (
       <div className="lesson-loading">
@@ -67,7 +66,7 @@ export default function LessonPage({ params }: LessonPageProps) {
       <div className="lesson-error">
         <h2>❌ {error || "Lesson not found"}</h2>
         <p>
-          We couldn't load this lesson. Please try again or go back to your
+          We couldn&apos;t load this lesson. Please try again or go back to your
           lessons.
         </p>
         <div className="lesson-error__actions">
@@ -84,7 +83,7 @@ export default function LessonPage({ params }: LessonPageProps) {
     return (
       <div className="lesson-error">
         <h2>📝 No content available</h2>
-        <p>This lesson doesn't have any sections yet.</p>
+        <p>This lesson doesn&apos;t have any sections yet.</p>
         <Button onClick={() => router.push("/")}>Back to Lessons</Button>
       </div>
     );
@@ -95,7 +94,7 @@ export default function LessonPage({ params }: LessonPageProps) {
     return (
       <div className="lesson-error">
         <h2>📝 Section not found</h2>
-        <p>The requested section doesn't exist.</p>
+        <p>The requested section doesn&apos;t exist.</p>
         <Button onClick={() => router.push("/")}>Back to Lessons</Button>
       </div>
     );
@@ -187,11 +186,11 @@ export default function LessonPage({ params }: LessonPageProps) {
                 </p>
               </CardHeader>
               <CardContent>
-                  <Quiz
-                    questions={currentSectionData.quiz.questions}
-                    quizId={currentSectionData.quiz.id}
-                    onComplete={handleQuizComplete}
-                  />
+                <Quiz
+                  questions={currentSectionData.quiz.questions}
+                  quizId={currentSectionData.quiz.id}
+                  onComplete={handleQuizComplete}
+                />
               </CardContent>
             </Card>
           )}
